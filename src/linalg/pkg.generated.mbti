@@ -6,19 +6,51 @@ import {
 }
 
 // Values
+pub fn bicgstab_solve(CsrMatrix, Vector, Int, Double) -> BicgstabResult
+
+pub fn compute_matrix_inverse(Matrix) -> Matrix?
+
+pub fn compute_pseudo_inverse(Matrix) -> PseudoInverseResult
+
 pub fn conjugate_gradient_solve(Matrix, Vector, Int, Double) -> IterativeResult
+
+pub fn cramer_solve_3x3(Matrix, Vector) -> Vector?
 
 pub fn determinant(Matrix) -> Double
 
 pub fn gaussian_solve(Matrix, Vector) -> SolverResult
 
+pub fn jacobi_eigen(Matrix, Int, Double) -> EigenDecomposition
+
 pub fn jacobi_solve(Matrix, Vector, Int, Double) -> IterativeResult
 
 pub fn matrix_inverse(Matrix) -> Matrix
 
+pub fn moving_average_filter(Vector, Int) -> Vector
+
+pub fn pinv_solve(Matrix, Vector) -> Vector
+
+pub fn qr_solve(Matrix, Vector) -> Vector
+
+pub fn sparse_cholesky_solve(CsrMatrix, Vector) -> Vector?
+
 // Errors
 
 // Types and methods
+pub struct BicgstabResult {
+  solution : Vector
+  iterations : Int
+  converged : Bool
+  residual : Double
+} derive(Eq, @debug.Debug)
+
+pub struct CholeskyDecomposition {
+  n : Int
+  l_mat : Matrix
+} derive(Eq, @debug.Debug)
+pub fn CholeskyDecomposition::decompose(Matrix) -> Self
+pub fn CholeskyDecomposition::solve(Self, Vector) -> Vector
+
 pub struct CsrMatrix {
   rows : Int
   cols : Int
@@ -31,6 +63,18 @@ pub fn CsrMatrix::get(Self, Int, Int) -> Double
 pub fn CsrMatrix::multiply_vector(Self, Vector) -> Vector
 pub fn CsrMatrix::nnz(Self) -> Int
 pub fn CsrMatrix::to_dense(Self) -> Matrix
+
+pub struct EigenDecomposition {
+  eigenvalues : Vector
+  eigenvectors : Matrix
+} derive(Eq, @debug.Debug)
+
+pub struct Ilu0Preconditioner {
+  l_mat : Matrix
+  u_mat : Matrix
+} derive(Eq, @debug.Debug)
+pub fn Ilu0Preconditioner::apply(Self, Vector) -> Vector
+pub fn Ilu0Preconditioner::new(Matrix, Matrix) -> Self
 
 pub struct IterativeResult {
   solution : Vector
@@ -50,6 +94,7 @@ pub struct LuDecomposition {
   sign : Int
 } derive(Eq, @debug.Debug)
 pub fn LuDecomposition::decompose(Matrix) -> Self
+pub fn LuDecomposition::det(Self) -> Double
 pub fn LuDecomposition::solve(Self, Vector) -> Vector
 pub fn LuDecomposition::solve_lower(Self, Vector) -> Vector
 pub fn LuDecomposition::solve_upper(Self, Vector) -> Vector
@@ -62,6 +107,7 @@ pub struct Matrix {
 pub fn Matrix::add_row_multiple(Self, Int, Int, Double) -> Unit
 pub fn Matrix::add_to_element(Self, Int, Int, Double) -> Unit
 pub fn Matrix::copy(Self) -> Self
+pub fn Matrix::det_3x3(Self) -> Double
 pub fn Matrix::get(Self, Int, Int) -> Double
 pub fn Matrix::identity(Int) -> Self
 pub fn Matrix::make(Int, Int, Double) -> Self
@@ -71,6 +117,7 @@ pub fn Matrix::norm_frobenius(Self) -> Double
 pub fn Matrix::norm_inf(Self) -> Double
 pub fn Matrix::num_cols(Self) -> Int
 pub fn Matrix::num_rows(Self) -> Int
+pub fn Matrix::scale(Self, Double) -> Self
 pub fn Matrix::scale_row(Self, Int, Double) -> Unit
 pub fn Matrix::set(Self, Int, Int, Double) -> Unit
 pub fn Matrix::swap_rows(Self, Int, Int) -> Unit
@@ -82,6 +129,19 @@ pub struct MatrixTriplet {
   col : Int
   val : Double
 } derive(Eq, @debug.Debug)
+
+pub struct PseudoInverseResult {
+  pinv_mat : Matrix
+  condition_number : Double
+} derive(Eq, @debug.Debug)
+
+pub struct QrDecomposition {
+  rows : Int
+  cols : Int
+  q_mat : Matrix
+  r_mat : Matrix
+} derive(Eq, @debug.Debug)
+pub fn QrDecomposition::decompose(Matrix) -> Self
 
 pub enum SolverResult {
   Success(Vector)
@@ -96,6 +156,12 @@ pub struct SparseBuilder {
 pub fn SparseBuilder::add_entry(Self, Int, Int, Double) -> Unit
 pub fn SparseBuilder::new(Int, Int) -> Self
 pub fn SparseBuilder::to_csr(Self) -> CsrMatrix
+
+pub struct SparseCholeskyResult {
+  l_csr : CsrMatrix
+  converged : Bool
+} derive(Eq, @debug.Debug)
+pub fn SparseCholeskyResult::new(CsrMatrix, Bool) -> Self
 
 pub struct Vector {
   data : Array[Double]
@@ -117,6 +183,16 @@ pub fn Vector::scale_inplace(Self, Double) -> Unit
 pub fn Vector::set(Self, Int, Double) -> Unit
 pub fn Vector::sub(Self, Self) -> Self
 pub fn Vector::zeros(Int) -> Self
+
+pub struct VectorStats {
+  mean : Double
+  std_dev : Double
+  min_val : Double
+  max_val : Double
+  rms : Double
+  peak_to_peak : Double
+} derive(Eq, @debug.Debug)
+pub fn VectorStats::compute(Vector) -> Self
 
 // Type aliases
 

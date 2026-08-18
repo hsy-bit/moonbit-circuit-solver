@@ -19,6 +19,12 @@ pub fn get_ind_companion(IntegrationScheme, Double, Double, Double, Double) -> I
 
 pub fn solve_transient(@spice.Netlist, Double, Double, Double) -> TransientResult
 
+pub fn solve_transient_adams(@spice.Netlist, Double, Double) -> TransientResult
+
+pub fn solve_transient_gear2(@spice.Netlist, Double, Double) -> TransientResult
+
+pub fn solve_transient_rk4(@spice.Netlist, Double, Double) -> TransientResult
+
 // Errors
 
 // Types and methods

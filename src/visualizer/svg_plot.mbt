@@ -1,8 +1,14 @@
 // Visualizer Module - Vector SVG Plot Renderer
 // MoonBit Circuit Solver Engine
 
+///|
 /// Renders a 2D dataset as a standalone SVG graphic string.
-pub fn render_svg_waveform(data : Array[(Double, Double)], width : Int, height : Int, title : String) -> String {
+pub fn render_svg_waveform(
+  data : Array[(Double, Double)],
+  width : Int,
+  height : Int,
+  title : String,
+) -> String {
   let len = data.length()
   if len == 0 {
     return "<svg width=\"100\" height=\"100\"></svg>"
@@ -16,10 +22,18 @@ pub fn render_svg_waveform(data : Array[(Double, Double)], width : Int, height :
   for i = 1; i < len; i = i + 1 {
     let x = data[i].0
     let y = data[i].1
-    if x < min_x { min_x = x }
-    if x > max_x { max_x = x }
-    if y < min_y { min_y = y }
-    if y > max_y { max_y = y }
+    if x < min_x {
+      min_x = x
+    }
+    if x > max_x {
+      max_x = x
+    }
+    if y < min_y {
+      min_y = y
+    }
+    if y > max_y {
+      max_y = y
+    }
   }
 
   let margin = 50.0
@@ -41,10 +55,22 @@ pub fn render_svg_waveform(data : Array[(Double, Double)], width : Int, height :
     points_str = points_str + px.to_string() + "," + py.to_string()
   }
 
-  let mut svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width.to_string() + "\" height=\"" + height.to_string() + "\">\n"
+  let mut svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" +
+    width.to_string() +
+    "\" height=\"" +
+    height.to_string() +
+    "\">\n"
   svg = svg + "<rect width=\"100%\" height=\"100%\" fill=\"#1e1e2e\"/>\n"
-  svg = svg + "<text x=\"" + (width / 2).to_string() + "\" y=\"30\" fill=\"#cdd6f4\" font-family=\"monospace\" font-size=\"16\" text-anchor=\"middle\">" + title + "</text>\n"
-  svg = svg + "<polyline fill=\"none\" stroke=\"#89b4fa\" stroke-width=\"2\" points=\"" + points_str + "\"/>\n"
+  svg = svg +
+    "<text x=\"" +
+    (width / 2).to_string() +
+    "\" y=\"30\" fill=\"#cdd6f4\" font-family=\"monospace\" font-size=\"16\" text-anchor=\"middle\">" +
+    title +
+    "</text>\n"
+  svg = svg +
+    "<polyline fill=\"none\" stroke=\"#89b4fa\" stroke-width=\"2\" points=\"" +
+    points_str +
+    "\"/>\n"
   svg = svg + "</svg>\n"
   svg
 }

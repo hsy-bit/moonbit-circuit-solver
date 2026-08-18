@@ -12,7 +12,11 @@ pub fn export_transient_csv(@transient.TransientResult, String) -> String
 
 pub fn format_dc_op_table(@mna.DcResult) -> String
 
+pub fn render_ascii_bode_plot(Array[@mna.AcPoint], String) -> String
+
 pub fn render_ascii_chart(Array[(Double, Double)], AsciiChartConfig) -> String
+
+pub fn render_svg_waveform(Array[(Double, Double)], Int, Int, String) -> String
 
 // Errors
 

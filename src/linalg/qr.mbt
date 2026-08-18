@@ -1,6 +1,7 @@
 // Linear Algebra Module - QR Decomposition & Least Squares
 // MoonBit Circuit Solver Engine
 
+///|
 /// Represents QR Decomposition result A = Q * R.
 pub struct QrDecomposition {
   rows : Int
@@ -9,6 +10,7 @@ pub struct QrDecomposition {
   r_mat : Matrix
 } derive(Debug, Eq)
 
+///|
 /// Decomposes m x n matrix A into Q (m x m orthogonal) and R (m x n upper triangular).
 pub fn QrDecomposition::decompose(a_mat : Matrix) -> QrDecomposition {
   let m = a_mat.num_rows()
@@ -75,6 +77,7 @@ pub fn QrDecomposition::decompose(a_mat : Matrix) -> QrDecomposition {
   QrDecomposition::{ rows: m, cols: n, q_mat, r_mat }
 }
 
+///|
 /// Solves overdetermined least-squares system A * x = b using QR decomposition.
 pub fn qr_solve(a_mat : Matrix, b_vec : Vector) -> Vector {
   let qr = QrDecomposition::decompose(a_mat)

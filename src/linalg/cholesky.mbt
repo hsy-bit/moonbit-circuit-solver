@@ -1,14 +1,18 @@
 // Linear Algebra Module - Cholesky Decomposition
 // MoonBit Circuit Solver Engine
 
+///|
 /// Represents Cholesky Decomposition A = L * L^T.
 pub struct CholeskyDecomposition {
   n : Int
   l_mat : Matrix
 } derive(Debug, Eq)
 
+///|
 /// Computes Cholesky factor L for symmetric positive-definite matrix A.
-pub fn CholeskyDecomposition::decompose(a_mat : Matrix) -> CholeskyDecomposition {
+pub fn CholeskyDecomposition::decompose(
+  a_mat : Matrix,
+) -> CholeskyDecomposition {
   let n = a_mat.num_rows()
   if n != a_mat.num_cols() {
     abort("Cholesky decomposition requires square matrix")
@@ -38,8 +42,12 @@ pub fn CholeskyDecomposition::decompose(a_mat : Matrix) -> CholeskyDecomposition
   CholeskyDecomposition::{ n, l_mat }
 }
 
+///|
 /// Solves A * x = b using Cholesky factor L (L * L^T * x = b).
-pub fn CholeskyDecomposition::solve(self : CholeskyDecomposition, b_vec : Vector) -> Vector {
+pub fn CholeskyDecomposition::solve(
+  self : CholeskyDecomposition,
+  b_vec : Vector,
+) -> Vector {
   // Forward substitution L * y = b
   let y = Array::make(self.n, 0.0)
   for i = 0; i < self.n; i = i + 1 {

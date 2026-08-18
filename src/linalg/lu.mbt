@@ -64,6 +64,16 @@ pub fn LuDecomposition::decompose(a_mat : Matrix) -> LuDecomposition {
 }
 
 ///|
+/// Computes determinant of matrix A from its LU decomposition det(A) = sign * prod(diag(U)).
+pub fn LuDecomposition::det(self : LuDecomposition) -> Double {
+  let mut d = self.sign.to_double()
+  for i = 0; i < self.n; i = i + 1 {
+    d = d * self.lu_mat.get(i, i)
+  }
+  d
+}
+
+///|
 /// Solves L * y = P * b (forward substitution).
 pub fn LuDecomposition::solve_lower(
   self : LuDecomposition,

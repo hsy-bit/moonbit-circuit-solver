@@ -8,11 +8,19 @@ import {
 // Values
 pub fn evaluate_expr(String, ParamTable) -> Double
 
+pub fn expand_subcircuit_instance(String, Array[String], SubcircuitDef) -> Array[Component]
+
 pub fn parse_spice_netlist(String) -> Netlist
 
 pub fn parse_spice_number(String) -> Double
 
 pub fn parse_waveform_spec(Array[String], Int) -> Waveform
+
+pub fn serialize_component(Component) -> String
+
+pub fn serialize_netlist(Netlist) -> String
+
+pub fn serialize_waveform(Waveform) -> String
 
 pub fn split_line_tokens(String) -> Array[String]
 
@@ -41,6 +49,10 @@ pub enum Component {
   Mosfet(String, String, String, String, String)
   OpAmp(String, String, String, String, Double)
 } derive(Eq, @debug.Debug)
+pub fn Component::create_capacitor(String, String, String, Double) -> Self
+pub fn Component::create_dc_vsource(String, String, String, Double) -> Self
+pub fn Component::create_inductor(String, String, String, Double) -> Self
+pub fn Component::create_resistor(String, String, String, Double) -> Self
 
 pub struct Lexer {
   input : String
@@ -61,6 +73,12 @@ pub enum ModelKind {
   MosfetModel(Double, Double, Double, Bool)
 } derive(Eq, @debug.Debug)
 
+pub struct ModelRegistry {
+  models : Map[String, ModelDef]
+} derive(Eq, @debug.Debug)
+pub fn ModelRegistry::default() -> Self
+pub fn ModelRegistry::lookup(Self, String) -> ModelDef?
+
 pub struct Netlist {
   title : String
   components : Array[Component]
@@ -72,12 +90,36 @@ pub fn Netlist::add_component(Self, Component) -> Unit
 pub fn Netlist::add_model(Self, ModelDef) -> Unit
 pub fn Netlist::new(String) -> Self
 
+pub struct NetlistBuilder {
+  netlist : Netlist
+} derive(Eq, @debug.Debug)
+pub fn NetlistBuilder::add_capacitor(Self, String, String, String, Double) -> Self
+pub fn NetlistBuilder::add_dc_isource(Self, String, String, String, Double) -> Self
+pub fn NetlistBuilder::add_dc_vsource(Self, String, String, String, Double) -> Self
+pub fn NetlistBuilder::add_inductor(Self, String, String, String, Double) -> Self
+pub fn NetlistBuilder::add_resistor(Self, String, String, String, Double) -> Self
+pub fn NetlistBuilder::build(Self) -> Netlist
+pub fn NetlistBuilder::new(String) -> Self
+
 pub struct ParamTable {
   table : Map[String, Double]
 } derive(Eq, @debug.Debug)
 pub fn ParamTable::get(Self, String, Double) -> Double
 pub fn ParamTable::new() -> Self
 pub fn ParamTable::set(Self, String, Double) -> Unit
+
+pub struct SubcircuitDef {
+  name : String
+  ports : Array[String]
+  components : Array[Component]
+} derive(Eq, @debug.Debug)
+pub fn SubcircuitDef::new(String, Array[String], Array[Component]) -> Self
+
+pub struct SubcircuitTable {
+  defs : Map[String, SubcircuitDef]
+} derive(Eq, @debug.Debug)
+pub fn SubcircuitTable::new() -> Self
+pub fn SubcircuitTable::register(Self, SubcircuitDef) -> Unit
 
 pub enum Token {
   TokId(String)

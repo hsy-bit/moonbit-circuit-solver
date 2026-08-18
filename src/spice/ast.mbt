@@ -44,6 +44,50 @@ pub enum Component {
 } derive(Debug, Eq)
 
 ///|
+/// Helper constructor for Resistor component.
+pub fn Component::create_resistor(
+  name : String,
+  n1 : String,
+  n2 : String,
+  val : Double,
+) -> Component {
+  Resistor(name, n1, n2, val)
+}
+
+///|
+/// Helper constructor for Capacitor component.
+pub fn Component::create_capacitor(
+  name : String,
+  n1 : String,
+  n2 : String,
+  val : Double,
+) -> Component {
+  Capacitor(name, n1, n2, val, 0.0)
+}
+
+///|
+/// Helper constructor for Inductor component.
+pub fn Component::create_inductor(
+  name : String,
+  n1 : String,
+  n2 : String,
+  val : Double,
+) -> Component {
+  Inductor(name, n1, n2, val, 0.0)
+}
+
+///|
+/// Helper constructor for DC VSource component.
+pub fn Component::create_dc_vsource(
+  name : String,
+  n1 : String,
+  n2 : String,
+  val : Double,
+) -> Component {
+  VSource(name, n1, n2, Dc(val))
+}
+
+///|
 /// Type of simulation analysis requested.
 pub enum AnalysisCommand {
   Op // .op

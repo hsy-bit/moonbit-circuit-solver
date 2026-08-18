@@ -2,16 +2,24 @@
 package "hsy-bit/moonbit-circuit-solver/src/circuit"
 
 import {
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
   "hsy-bit/moonbit-circuit-solver/src/spice",
   "hsy-bit/moonbit-circuit-solver/src/transient",
   "moonbitlang/core/debug",
 }
 
 // Values
+pub fn run_ladder_benchmark(Int) -> BenchmarkResult
 
 // Errors
 
 // Types and methods
+pub struct BenchmarkResult {
+  matrix_size : Int
+  solution_time_ms : Double
+  residual_norm : Double
+} derive(Eq, @debug.Debug)
+
 pub struct CircuitSimulator {
   netlist : @spice.Netlist
 } derive(Eq, @debug.Debug)
@@ -19,6 +27,7 @@ pub fn CircuitSimulator::from_spice_string(String) -> Self
 pub fn CircuitSimulator::render_transient_chart(Self, Double, Double, String) -> String
 pub fn CircuitSimulator::run_dc_op_report(Self) -> String
 pub fn CircuitSimulator::solve_dc(Self) -> Map[String, Double]
+pub fn CircuitSimulator::solve_least_squares(Self, @linalg.Matrix, @linalg.Vector) -> @linalg.Vector
 pub fn CircuitSimulator::solve_nonlinear_dc(Self) -> Map[String, Double]
 pub fn CircuitSimulator::solve_transient(Self, Double, Double) -> @transient.TransientResult
 

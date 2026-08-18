@@ -81,6 +81,17 @@ pub fn Matrix::copy(self : Matrix) -> Matrix {
 }
 
 ///|
+/// Scales matrix by a scalar factor and returns a new matrix.
+pub fn Matrix::scale(self : Matrix, scalar : Double) -> Matrix {
+  let res = self.copy()
+  let total = self.rows * self.cols
+  for i = 0; i < total; i = i + 1 {
+    res.data[i] = res.data[i] * scalar
+  }
+  res
+}
+
+///|
 /// Multiplies matrix by a column vector: y = A * x.
 pub fn Matrix::multiply_vector(self : Matrix, x : Vector) -> Vector {
   if self.cols != x.length() {

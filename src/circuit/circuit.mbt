@@ -72,3 +72,14 @@ pub fn CircuitSimulator::solve_nonlinear_dc(
   let res = @nonlinear.solve_nonlinear_dc(self.netlist, 50, 0.0001, 0.000001)
   res.dc_result.node_voltages
 }
+
+///|
+/// Solves arbitrary matrix system A * x = b using least squares pseudo-inverse.
+pub fn CircuitSimulator::solve_least_squares(
+  self : CircuitSimulator,
+  a_mat : @linalg.Matrix,
+  b_vec : @linalg.Vector,
+) -> @linalg.Vector {
+  let _ = self.netlist.title
+  @linalg.pinv_solve(a_mat, b_vec)
+}
