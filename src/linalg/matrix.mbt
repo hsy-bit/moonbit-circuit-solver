@@ -82,35 +82,35 @@ pub fn Matrix::multiply_vector(self : Matrix, x : Vector) -> Vector {
   Vector::from_array(y)
 }
 
-/// Multiplies two matrices C = A * B.
-pub fn Matrix::multiply(self : Matrix, B : Matrix) -> Matrix {
-  if self.cols != B.rows {
+/// Multiplies two matrices c_mat = self * b_mat.
+pub fn Matrix::multiply(self : Matrix, b_mat : Matrix) -> Matrix {
+  if self.cols != b_mat.rows {
     abort("Matrix-matrix dimension mismatch")
   }
-  let C = Matrix::zeros(self.rows, B.cols)
+  let c_mat = Matrix::zeros(self.rows, b_mat.cols)
   for r = 0; r < self.rows; r = r + 1 {
     for k = 0; k < self.cols; k = k + 1 {
       let a_rk = self.get(r, k)
       if a_rk != 0.0 {
-        for c = 0; c < B.cols; c = c + 1 {
-          let curr = C.get(r, c)
-          C.set(r, c, curr + a_rk * B.get(k, c))
+        for c = 0; c < b_mat.cols; c = c + 1 {
+          let curr = c_mat.get(r, c)
+          c_mat.set(r, c, curr + a_rk * b_mat.get(k, c))
         }
       }
     }
   }
-  C
+  c_mat
 }
 
 /// Transposes matrix and returns a new matrix.
 pub fn Matrix::transpose(self : Matrix) -> Matrix {
-  let T = Matrix::zeros(self.cols, self.rows)
+  let t_mat = Matrix::zeros(self.cols, self.rows)
   for r = 0; r < self.rows; r = r + 1 {
     for c = 0; c < self.cols; c = c + 1 {
-      T.set(c, r, self.get(r, c))
+      t_mat.set(c, r, self.get(r, c))
     }
   }
-  T
+  t_mat
 }
 
 /// Swaps row `r1` and row `r2` in-place.
