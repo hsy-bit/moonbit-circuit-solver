@@ -25,7 +25,7 @@ pub fn gaussian_solve(a_mat : Matrix, b_vec : Vector) -> SolverResult {
   for k = 0; k < n; k = k + 1 {
     // Find pivot row
     let mut max_row = k
-    let mut max_val = aug.get(k, k)
+    let max_val = aug.get(k, k)
     let abs_max_val = if max_val < 0.0 { -max_val } else { max_val }
     let mut max_abs = abs_max_val
 
@@ -38,8 +38,8 @@ pub fn gaussian_solve(a_mat : Matrix, b_vec : Vector) -> SolverResult {
       }
     }
 
-    if max_abs < 1e-14 {
-      return SingularMatrix("Matrix is singular or near-singular at pivot \(k)")
+    if max_abs < 0.00000000000001 {
+      return SingularMatrix("Matrix is singular or near-singular at pivot \{k}")
     }
 
     // Swap pivot row if needed
@@ -71,8 +71,8 @@ pub fn gaussian_solve(a_mat : Matrix, b_vec : Vector) -> SolverResult {
       sum = sum - aug.get(i, j) * x[j]
     }
     let diag = aug.get(i, i)
-    if diag < 1e-14 && diag > -1e-14 {
-      return SingularMatrix("Zero diagonal during back substitution at \(i)")
+    if diag < 0.00000000000001 && diag > -0.00000000000001 {
+      return SingularMatrix("Zero diagonal during back substitution at \{i}")
     }
     x[i] = sum / diag
   }
@@ -96,7 +96,7 @@ pub fn matrix_inverse(a_mat : Matrix) -> Matrix {
 
   for k = 0; k < n; k = k + 1 {
     let mut pivot_row = k
-    let mut max_val = aug.get(k, k)
+    let max_val = aug.get(k, k)
     let mut abs_max = if max_val < 0.0 { -max_val } else { max_val }
 
     for r = k + 1; r < n; r = r + 1 {
@@ -108,7 +108,7 @@ pub fn matrix_inverse(a_mat : Matrix) -> Matrix {
       }
     }
 
-    if abs_max < 1e-15 {
+    if abs_max < 0.000000000000001 {
       abort("Matrix is singular, cannot invert")
     }
 
@@ -148,7 +148,7 @@ pub fn determinant(a_mat : Matrix) -> Double {
 
   for k = 0; k < n; k = k + 1 {
     let mut max_r = k
-    let mut max_v = mat.get(k, k)
+    let max_v = mat.get(k, k)
     let mut abs_max = if max_v < 0.0 { -max_v } else { max_v }
 
     for r = k + 1; r < n; r = r + 1 {
@@ -160,7 +160,7 @@ pub fn determinant(a_mat : Matrix) -> Double {
       }
     }
 
-    if abs_max < 1e-15 {
+    if abs_max < 0.000000000000001 {
       return 0.0
     }
 

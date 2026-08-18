@@ -24,7 +24,7 @@ pub fn jacobi_solve(a_mat : Matrix, b_vec : Vector, max_iter : Int, tol : Double
   let mut res_norm = tol + 1.0
   let mut is_conv = false
 
-  while iter < max_iter && not(is_conv) {
+  while iter < max_iter && !is_conv {
     iter = iter + 1
     for i = 0; i < n; i = i + 1 {
       let mut sum = b_vec.get(i)

@@ -25,7 +25,7 @@ pub fn LuDecomposition::decompose(a_mat : Matrix) -> LuDecomposition {
   for k = 0; k < n; k = k + 1 {
     // Pivot selection
     let mut max_row = k
-    let mut max_val = lu_mat.get(k, k)
+    let max_val = lu_mat.get(k, k)
     let mut abs_max = if max_val < 0.0 { -max_val } else { max_val }
 
     for r = k + 1; r < n; r = r + 1 {
