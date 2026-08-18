@@ -1,6 +1,7 @@
 // Non-linear Damped Newton-Raphson Solver Engine
 // MoonBit Circuit Solver Engine
 
+///|
 /// Result of Newton-Raphson non-linear iteration.
 pub struct NewtonRaphsonResult {
   converged : Bool
@@ -9,8 +10,14 @@ pub struct NewtonRaphsonResult {
   dc_result : @mna.DcResult
 } derive(Debug, Eq)
 
+///|
 /// Solves non-linear DC operating point using Damped Newton-Raphson iterations.
-pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : Double, abs_tol : Double) -> NewtonRaphsonResult {
+pub fn solve_nonlinear_dc(
+  netlist : @spice.Netlist,
+  max_iters : Int,
+  rel_tol : Double,
+  abs_tol : Double,
+) -> NewtonRaphsonResult {
   let (indexer, a_mat_base, z_vec_base, _) = @mna.build_dc_mna_system(netlist)
   let size = indexer.total_size()
 
@@ -32,7 +39,7 @@ pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : D
           let v1 = if n1 >= 0 { sol.get(n1) } else { 0.0 }
           let v2 = if n2 >= 0 { sol.get(n2) } else { 0.0 }
           let vd = v1 - v2
-          let companion = evaluate_diode(vd, 1e-14, 1.0, 0.02585)
+          let companion = evaluate_diode(vd, 0.00000000000001, 1.0, 0.02585)
           stamp_diode_companion(a_mat, z_vec, n1, n2, companion)
         }
         Bjt(_, c_str, b_str, e_str, _) => {
@@ -42,7 +49,14 @@ pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : D
           let vc = if c >= 0 { sol.get(c) } else { 0.0 }
           let vb = if b >= 0 { sol.get(b) } else { 0.0 }
           let ve = if e >= 0 { sol.get(e) } else { 0.0 }
-          let companion = evaluate_bjt(vb - ve, vb - vc, 1e-14, 100.0, 1.0, true)
+          let companion = evaluate_bjt(
+            vb - ve,
+            vb - vc,
+            0.00000000000001,
+            100.0,
+            1.0,
+            true,
+          )
           stamp_bjt_companion(a_mat, z_vec, c, b, e, companion)
         }
         Mosfet(_, d_str, g_str, s_str, _) => {
@@ -52,7 +66,14 @@ pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : D
           let vd = if d >= 0 { sol.get(d) } else { 0.0 }
           let vg = if g >= 0 { sol.get(g) } else { 0.0 }
           let vs = if s >= 0 { sol.get(s) } else { 0.0 }
-          let companion = evaluate_mosfet(vg - vs, vd - vs, 0.7, 0.001, 0.01, true)
+          let companion = evaluate_mosfet(
+            vg - vs,
+            vd - vs,
+            0.7,
+            0.001,
+            0.01,
+            true,
+          )
           stamp_mosfet_companion(a_mat, z_vec, d, g, s, companion)
         }
         _ => ()
@@ -76,8 +97,8 @@ pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : D
     sol = updated
   }
 
-  let node_v : Map[String, Double] = Map::new()
-  let branch_i : Map[String, Double] = Map::new()
+  let node_v : Map[String, Double] = Map([])
+  let branch_i : Map[String, Double] = Map([])
   let n_nodes = indexer.node_count()
   for i = 0; i < n_nodes; i = i + 1 {
     let name = indexer.get_node_name(i)
@@ -88,12 +109,7 @@ pub fn solve_nonlinear_dc(netlist : @spice.Netlist, max_iters : Int, rel_tol : D
     branch_i.set(name, sol.get(i))
   }
 
-  let dc_res = @mna.DcResult::{
-    node_indexer: indexer,
-    node_voltages: node_v,
-    branch_currents: branch_i,
-    solution_vector: sol,
-  }
+  let dc_res = @mna.DcResult::new(indexer, node_v, branch_i, sol)
 
   NewtonRaphsonResult::{
     converged: is_conv,

@@ -1,0 +1,29 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/visualizer"
+
+import {
+  "hsy-bit/moonbit-circuit-solver/src/mna",
+  "hsy-bit/moonbit-circuit-solver/src/transient",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn export_transient_csv(@transient.TransientResult, String) -> String
+
+pub fn format_dc_op_table(@mna.DcResult) -> String
+
+pub fn render_ascii_chart(Array[(Double, Double)], AsciiChartConfig) -> String
+
+// Errors
+
+// Types and methods
+pub struct AsciiChartConfig {
+  width : Int
+  height : Int
+  title : String
+} derive(Eq, @debug.Debug)
+pub fn AsciiChartConfig::default() -> Self
+
+// Type aliases
+
+// Traits

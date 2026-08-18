@@ -1,0 +1,104 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/spice"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn evaluate_expr(String, ParamTable) -> Double
+
+pub fn parse_spice_netlist(String) -> Netlist
+
+pub fn parse_spice_number(String) -> Double
+
+pub fn parse_waveform_spec(Array[String], Int) -> Waveform
+
+pub fn split_line_tokens(String) -> Array[String]
+
+// Errors
+
+// Types and methods
+pub enum AnalysisCommand {
+  Op
+  Dc(String, Double, Double, Double)
+  Ac(String, Int, Double, Double)
+  Tran(Double, Double, Double)
+} derive(Eq, @debug.Debug)
+
+pub enum Component {
+  Resistor(String, String, String, Double)
+  Capacitor(String, String, String, Double, Double)
+  Inductor(String, String, String, Double, Double)
+  VSource(String, String, String, Waveform)
+  ISource(String, String, String, Waveform)
+  Vcvs(String, String, String, String, String, Double)
+  Vccs(String, String, String, String, String, Double)
+  Cccs(String, String, String, String, Double)
+  Ccvs(String, String, String, String, Double)
+  Diode(String, String, String, String)
+  Bjt(String, String, String, String, String)
+  Mosfet(String, String, String, String, String)
+  OpAmp(String, String, String, String, Double)
+} derive(Eq, @debug.Debug)
+
+pub struct Lexer {
+  input : String
+  mut pos : Int
+  len : Int
+} derive(Eq, @debug.Debug)
+pub fn Lexer::new(String) -> Self
+pub fn Lexer::next_token(Self) -> Token
+
+pub struct ModelDef {
+  name : String
+  kind : ModelKind
+} derive(Eq, @debug.Debug)
+
+pub enum ModelKind {
+  DiodeModel(Double, Double, Double)
+  BjtModel(Double, Double, Double, Bool)
+  MosfetModel(Double, Double, Double, Bool)
+} derive(Eq, @debug.Debug)
+
+pub struct Netlist {
+  title : String
+  components : Array[Component]
+  models : Array[ModelDef]
+  analyses : Array[AnalysisCommand]
+} derive(Eq, @debug.Debug)
+pub fn Netlist::add_analysis(Self, AnalysisCommand) -> Unit
+pub fn Netlist::add_component(Self, Component) -> Unit
+pub fn Netlist::add_model(Self, ModelDef) -> Unit
+pub fn Netlist::new(String) -> Self
+
+pub struct ParamTable {
+  table : Map[String, Double]
+} derive(Eq, @debug.Debug)
+pub fn ParamTable::get(Self, String, Double) -> Double
+pub fn ParamTable::new() -> Self
+pub fn ParamTable::set(Self, String, Double) -> Unit
+
+pub enum Token {
+  TokId(String)
+  TokNum(Double)
+  TokStr(String)
+  TokEquals
+  TokComma
+  TokDot
+  TokLParen
+  TokRParen
+  TokEol
+  TokEof
+} derive(Eq, @debug.Debug)
+
+pub enum Waveform {
+  Dc(Double)
+  Pulse(Double, Double, Double, Double, Double, Double, Double)
+  Sine(Double, Double, Double, Double, Double)
+  Pwl(Array[(Double, Double)])
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

@@ -1,9 +1,0 @@
-{
-  "is-main": false,
-  "import": [
-    "hsy-bit/moonbit-circuit-solver/src/linalg",
-    "hsy-bit/moonbit-circuit-solver/src/spice",
-    "hsy-bit/moonbit-circuit-solver/src/mna",
-    "hsy-bit/moonbit-circuit-solver/src/nonlinear"
-  ]
-}

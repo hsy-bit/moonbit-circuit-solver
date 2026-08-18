@@ -1,0 +1,11 @@
+import {
+  "hsy-bit/moonbit-circuit-solver/src/spice",
+  "hsy-bit/moonbit-circuit-solver/src/mna",
+  "hsy-bit/moonbit-circuit-solver/src/nonlinear",
+  "hsy-bit/moonbit-circuit-solver/src/transient",
+  "hsy-bit/moonbit-circuit-solver/src/visualizer",
+}
+
+options(
+  "is-main": false,
+)

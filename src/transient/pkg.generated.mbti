@@ -1,0 +1,53 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/transient"
+
+import {
+  "hsy-bit/moonbit-circuit-solver/src/spice",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn available_schemes() -> Array[IntegrationScheme]
+
+pub fn calculate_next_dt(Double, Double, Double, Double, Double) -> Double
+
+pub fn evaluate_waveform_at_t(@spice.Waveform, Double) -> Double
+
+pub fn get_cap_companion(IntegrationScheme, Double, Double, Double, Double) -> CapCompanion
+
+pub fn get_ind_companion(IntegrationScheme, Double, Double, Double, Double) -> IndCompanion
+
+pub fn solve_transient(@spice.Netlist, Double, Double, Double) -> TransientResult
+
+// Errors
+
+// Types and methods
+pub struct CapCompanion {
+  req : Double
+  ieq : Double
+} derive(Eq, @debug.Debug)
+
+pub struct IndCompanion {
+  req : Double
+  ieq : Double
+} derive(Eq, @debug.Debug)
+
+pub enum IntegrationScheme {
+  BackwardEuler
+  Trapezoidal
+  Gear2
+} derive(Eq, @debug.Debug)
+
+pub struct TransientResult {
+  steps : Array[TransientStepPoint]
+} derive(Eq, @debug.Debug)
+
+pub struct TransientStepPoint {
+  time : Double
+  node_voltages : Map[String, Double]
+  branch_currents : Map[String, Double]
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

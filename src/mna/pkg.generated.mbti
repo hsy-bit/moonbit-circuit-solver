@@ -1,0 +1,85 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/mna"
+
+import {
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
+  "hsy-bit/moonbit-circuit-solver/src/spice",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn build_dc_mna_system(@spice.Netlist) -> (NodeIndexer, @linalg.Matrix, @linalg.Vector, Map[String, Int])
+
+pub fn solve_ac_at_freq(@spice.Netlist, Double) -> AcPoint
+
+pub fn solve_ac_sweep(@spice.Netlist, Double, Double, Int) -> AcResult
+
+pub fn solve_dc_op(@spice.Netlist) -> DcResult
+
+pub fn stamp_isource(@linalg.Vector, Int, Int, Double) -> Unit
+
+pub fn stamp_matrix_entry(@linalg.Matrix, Int, Int, Double) -> Unit
+
+pub fn stamp_opamp(@linalg.Matrix, Int, Int, Int, Int, Double) -> Unit
+
+pub fn stamp_resistor(@linalg.Matrix, Int, Int, Double) -> Unit
+
+pub fn stamp_vccs(@linalg.Matrix, Int, Int, Int, Int, Double) -> Unit
+
+pub fn stamp_vcvs(@linalg.Matrix, Int, Int, Int, Int, Int, Double) -> Unit
+
+pub fn stamp_vector_entry(@linalg.Vector, Int, Double) -> Unit
+
+pub fn stamp_vsource(@linalg.Matrix, @linalg.Vector, Int, Int, Int, Double) -> Unit
+
+pub fn to_db(Double) -> Double
+
+// Errors
+
+// Types and methods
+pub struct AcPoint {
+  freq : Double
+  magnitude : Map[String, Double]
+  phase_deg : Map[String, Double]
+} derive(Eq, @debug.Debug)
+
+pub struct AcResult {
+  sweep_points : Array[AcPoint]
+} derive(Eq, @debug.Debug)
+
+pub struct DcResult {
+  node_indexer : NodeIndexer
+  node_voltages : Map[String, Double]
+  branch_currents : Map[String, Double]
+  solution_vector : @linalg.Vector
+} derive(Eq, @debug.Debug)
+pub fn DcResult::new(NodeIndexer, Map[String, Double], Map[String, Double], @linalg.Vector) -> Self
+
+pub struct DcSweepPoint {
+  sweep_val : Double
+  voltages : Map[String, Double]
+} derive(Eq, @debug.Debug)
+pub fn DcSweepPoint::new(Double, Map[String, Double]) -> Self
+
+pub struct DcSweepResult {
+  src_name : String
+  points : Array[DcSweepPoint]
+} derive(Eq, @debug.Debug)
+pub fn DcSweepResult::new(String, Array[DcSweepPoint]) -> Self
+
+pub struct NodeIndexer {
+  node_to_idx : Map[String, Int]
+  idx_to_node : Map[Int, String]
+  mut num_nodes : Int
+  mut num_aux_vars : Int
+} derive(Eq, @debug.Debug)
+pub fn NodeIndexer::allocate_aux_var(Self, String) -> Int
+pub fn NodeIndexer::get_node_name(Self, Int) -> String
+pub fn NodeIndexer::get_or_add_node(Self, String) -> Int
+pub fn NodeIndexer::new() -> Self
+pub fn NodeIndexer::node_count(Self) -> Int
+pub fn NodeIndexer::total_size(Self) -> Int
+
+// Type aliases
+
+// Traits

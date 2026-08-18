@@ -1,6 +1,7 @@
 // SPICE Lexer & Tokenizer
 // MoonBit Circuit Solver Engine
 
+///|
 /// Lexical tokens in SPICE netlist syntax.
 pub enum Token {
   TokId(String)
@@ -15,6 +16,7 @@ pub enum Token {
   TokEof
 } derive(Debug, Eq)
 
+///|
 /// Converts SPICE SI suffix string (k, u, m, n, p, f, meg, g) to numerical multiplier.
 pub fn parse_spice_number(s : String) -> Double {
   let len = s.length()
@@ -35,7 +37,7 @@ pub fn parse_spice_number(s : String) -> Double {
     }
   }
 
-  let num_str = s.substring(start=0, end=num_end)
+  let num_str = s[0:num_end].to_owned()
   let mut val = 0.0
   let mut parsed = false
   // Try parsing float prefix
@@ -88,7 +90,7 @@ pub fn parse_spice_number(s : String) -> Double {
 
   // Process suffix multiplier
   if num_end < len {
-    let suf = lower_s.substring(start=num_end, end=len)
+    let suf = lower_s[num_end:len].to_owned()
     if suf.has_prefix("meg") {
       val = val * 1000000.0
     } else if suf.has_prefix("k") {
@@ -111,6 +113,7 @@ pub fn parse_spice_number(s : String) -> Double {
   val
 }
 
+///|
 /// Tokenizer state for scanning SPICE text stream.
 pub struct Lexer {
   input : String
@@ -118,12 +121,14 @@ pub struct Lexer {
   len : Int
 } derive(Debug, Eq)
 
+///|
 /// Creates a new Lexer for SPICE text.
 pub fn Lexer::new(input : String) -> Lexer {
   let len = input.length()
   Lexer::{ input, pos: 0, len }
 }
 
+///|
 /// Scans next token from input stream.
 pub fn Lexer::next_token(self : Lexer) -> Token {
   while self.pos < self.len {
@@ -153,19 +158,40 @@ pub fn Lexer::next_token(self : Lexer) -> Token {
     } else if c == ')' {
       self.pos = self.pos + 1
       return TokRParen
+    } else if c == '"' || c == '\'' {
+      self.pos = self.pos + 1
+      let start = self.pos
+      while self.pos < self.len && self.input[self.pos] != c {
+        self.pos = self.pos + 1
+      }
+      let str_val = self.input[start:self.pos].to_owned()
+      if self.pos < self.len {
+        self.pos = self.pos + 1
+      }
+      return TokStr(str_val)
     } else {
       let is_digit = c >= '0' && c <= '9'
-      let is_sign = (c == '+' || c == '-') && self.pos + 1 < self.len && self.input[self.pos + 1] >= '0' && self.input[self.pos + 1] <= '9'
+      let is_sign = (c == '+' || c == '-') &&
+        self.pos + 1 < self.len &&
+        self.input[self.pos + 1] >= '0' &&
+        self.input[self.pos + 1] <= '9'
 
       let start = self.pos
       while self.pos < self.len {
         let ch = self.input[self.pos]
-        if ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' || ch == '=' || ch == ',' || ch == '(' || ch == ')' {
+        if ch == ' ' ||
+          ch == '\t' ||
+          ch == '\r' ||
+          ch == '\n' ||
+          ch == '=' ||
+          ch == ',' ||
+          ch == '(' ||
+          ch == ')' {
           break
         }
         self.pos = self.pos + 1
       }
-      let tok_str = self.input.substring(start~, end=self.pos)
+      let tok_str = self.input[start:self.pos].to_owned()
       if is_digit || is_sign {
         let num_val = parse_spice_number(tok_str)
         return TokNum(num_val)

@@ -1,6 +1,7 @@
 // Linear Algebra Module - LU Decomposition & Triangular Solvers
 // MoonBit Circuit Solver Engine
 
+///|
 /// Represents the LU Decomposition result P * A = L * U.
 pub struct LuDecomposition {
   n : Int
@@ -9,6 +10,7 @@ pub struct LuDecomposition {
   sign : Int
 } derive(Debug, Eq)
 
+///|
 /// Decomposes matrix A into P * A = L * U.
 pub fn LuDecomposition::decompose(a_mat : Matrix) -> LuDecomposition {
   let n = a_mat.num_rows()
@@ -61,8 +63,12 @@ pub fn LuDecomposition::decompose(a_mat : Matrix) -> LuDecomposition {
   LuDecomposition::{ n, lu_mat, pivots, sign }
 }
 
+///|
 /// Solves L * y = P * b (forward substitution).
-pub fn LuDecomposition::solve_lower(self : LuDecomposition, b_vec : Vector) -> Vector {
+pub fn LuDecomposition::solve_lower(
+  self : LuDecomposition,
+  b_vec : Vector,
+) -> Vector {
   let y = Array::make(self.n, 0.0)
   for i = 0; i < self.n; i = i + 1 {
     let perm_idx = self.pivots[i]
@@ -75,8 +81,12 @@ pub fn LuDecomposition::solve_lower(self : LuDecomposition, b_vec : Vector) -> V
   Vector::from_array(y)
 }
 
+///|
 /// Solves U * x = y (backward substitution).
-pub fn LuDecomposition::solve_upper(self : LuDecomposition, y_vec : Vector) -> Vector {
+pub fn LuDecomposition::solve_upper(
+  self : LuDecomposition,
+  y_vec : Vector,
+) -> Vector {
   let x = Array::make(self.n, 0.0)
   for i = self.n - 1; i >= 0; i = i - 1 {
     let mut sum = y_vec.get(i)
@@ -92,6 +102,7 @@ pub fn LuDecomposition::solve_upper(self : LuDecomposition, y_vec : Vector) -> V
   Vector::from_array(x)
 }
 
+///|
 /// Solves A * x = b using pre-computed LU decomposition.
 pub fn LuDecomposition::solve(self : LuDecomposition, b_vec : Vector) -> Vector {
   let y = self.solve_lower(b_vec)

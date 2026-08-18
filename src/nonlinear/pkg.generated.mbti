@@ -1,0 +1,76 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/nonlinear"
+
+import {
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
+  "hsy-bit/moonbit-circuit-solver/src/mna",
+  "hsy-bit/moonbit-circuit-solver/src/spice",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn evaluate_bjt(Double, Double, Double, Double, Double, Bool) -> BjtCompanion
+
+pub fn evaluate_diode(Double, Double, Double, Double) -> DiodeCompanion
+
+pub fn evaluate_mosfet(Double, Double, Double, Double, Double, Bool) -> MosfetCompanion
+
+pub fn pnjlim(Double, Double, Double, Double) -> Double
+
+pub fn solve_nonlinear_dc(@spice.Netlist, Int, Double, Double) -> NewtonRaphsonResult
+
+pub fn stamp_bjt_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, BjtCompanion) -> Unit
+
+pub fn stamp_diode_companion(@linalg.Matrix, @linalg.Vector, Int, Int, DiodeCompanion) -> Unit
+
+pub fn stamp_mosfet_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, MosfetCompanion) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct BjtCompanion {
+  vbe : Double
+  vbc : Double
+  ib : Double
+  ic : Double
+  gpi : Double
+  gm : Double
+  gmu : Double
+  go : Double
+  ieq_b : Double
+  ieq_c : Double
+} derive(Eq, @debug.Debug)
+
+pub struct DiodeCompanion {
+  vd : Double
+  id : Double
+  gd : Double
+  ieq : Double
+} derive(Eq, @debug.Debug)
+
+pub struct MosfetCompanion {
+  vgs : Double
+  vds : Double
+  ids : Double
+  gm : Double
+  gds : Double
+  ieq : Double
+  region : MosfetRegion
+} derive(Eq, @debug.Debug)
+
+pub enum MosfetRegion {
+  Cutoff
+  Linear
+  Saturation
+} derive(Eq, @debug.Debug)
+
+pub struct NewtonRaphsonResult {
+  converged : Bool
+  iterations : Int
+  solution : @linalg.Vector
+  dc_result : @mna.DcResult
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

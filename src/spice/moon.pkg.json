@@ -1,6 +1,0 @@
-{
-  "is-main": false,
-  "import": [
-    "hsy-bit/moonbit-circuit-solver/src/linalg"
-  ]
-}

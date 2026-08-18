@@ -1,6 +1,7 @@
 // Linear Algebra Module - Dense Matrix Operations
 // MoonBit Circuit Solver Engine
 
+///|
 /// Dense 2D matrix stored in row-major order.
 pub struct Matrix {
   rows : Int
@@ -8,17 +9,20 @@ pub struct Matrix {
   data : Array[Double]
 } derive(Debug, Eq)
 
+///|
 /// Creates a new matrix of size `rows x cols` with initial value.
 pub fn Matrix::make(rows : Int, cols : Int, init_val : Double) -> Matrix {
   let data = Array::make(rows * cols, init_val)
   Matrix::{ rows, cols, data }
 }
 
+///|
 /// Creates a zero matrix of size `rows x cols`.
 pub fn Matrix::zeros(rows : Int, cols : Int) -> Matrix {
   Matrix::make(rows, cols, 0.0)
 }
 
+///|
 /// Creates an identity matrix of size `dim x dim`.
 pub fn Matrix::identity(dim : Int) -> Matrix {
   let mat = Matrix::zeros(dim, dim)
@@ -28,6 +32,7 @@ pub fn Matrix::identity(dim : Int) -> Matrix {
   mat
 }
 
+///|
 /// Gets element at (row, col).
 pub fn Matrix::get(self : Matrix, row : Int, col : Int) -> Double {
   if row < 0 || row >= self.rows || col < 0 || col >= self.cols {
@@ -36,6 +41,7 @@ pub fn Matrix::get(self : Matrix, row : Int, col : Int) -> Double {
   self.data[row * self.cols + col]
 }
 
+///|
 /// Sets element at (row, col).
 pub fn Matrix::set(self : Matrix, row : Int, col : Int, val : Double) -> Unit {
   if row < 0 || row >= self.rows || col < 0 || col >= self.cols {
@@ -44,27 +50,37 @@ pub fn Matrix::set(self : Matrix, row : Int, col : Int, val : Double) -> Unit {
   self.data[row * self.cols + col] = val
 }
 
+///|
 /// Adds value to element at (row, col) in-place.
-pub fn Matrix::add_to_element(self : Matrix, row : Int, col : Int, val : Double) -> Unit {
+pub fn Matrix::add_to_element(
+  self : Matrix,
+  row : Int,
+  col : Int,
+  val : Double,
+) -> Unit {
   let curr = self.get(row, col)
   self.set(row, col, curr + val)
 }
 
+///|
 /// Returns the number of rows.
 pub fn Matrix::num_rows(self : Matrix) -> Int {
   self.rows
 }
 
+///|
 /// Returns the number of columns.
 pub fn Matrix::num_cols(self : Matrix) -> Int {
   self.cols
 }
 
+///|
 /// Deep copy of matrix.
 pub fn Matrix::copy(self : Matrix) -> Matrix {
   Matrix::{ rows: self.rows, cols: self.cols, data: self.data.copy() }
 }
 
+///|
 /// Multiplies matrix by a column vector: y = A * x.
 pub fn Matrix::multiply_vector(self : Matrix, x : Vector) -> Vector {
   if self.cols != x.length() {
@@ -82,6 +98,7 @@ pub fn Matrix::multiply_vector(self : Matrix, x : Vector) -> Vector {
   Vector::from_array(y)
 }
 
+///|
 /// Multiplies two matrices c_mat = self * b_mat.
 pub fn Matrix::multiply(self : Matrix, b_mat : Matrix) -> Matrix {
   if self.cols != b_mat.rows {
@@ -102,6 +119,7 @@ pub fn Matrix::multiply(self : Matrix, b_mat : Matrix) -> Matrix {
   c_mat
 }
 
+///|
 /// Transposes matrix and returns a new matrix.
 pub fn Matrix::transpose(self : Matrix) -> Matrix {
   let t_mat = Matrix::zeros(self.cols, self.rows)
@@ -113,6 +131,7 @@ pub fn Matrix::transpose(self : Matrix) -> Matrix {
   t_mat
 }
 
+///|
 /// Swaps row `r1` and row `r2` in-place.
 pub fn Matrix::swap_rows(self : Matrix, r1 : Int, r2 : Int) -> Unit {
   if r1 == r2 {
@@ -125,6 +144,7 @@ pub fn Matrix::swap_rows(self : Matrix, r1 : Int, r2 : Int) -> Unit {
   }
 }
 
+///|
 /// Scales row `r` by scalar factor in-place.
 pub fn Matrix::scale_row(self : Matrix, r : Int, scalar : Double) -> Unit {
   for c = 0; c < self.cols; c = c + 1 {
@@ -132,14 +152,21 @@ pub fn Matrix::scale_row(self : Matrix, r : Int, scalar : Double) -> Unit {
   }
 }
 
+///|
 /// Performs row operation: row[r1] = row[r1] + alpha * row[r2].
-pub fn Matrix::add_row_multiple(self : Matrix, r1 : Int, r2 : Int, alpha : Double) -> Unit {
+pub fn Matrix::add_row_multiple(
+  self : Matrix,
+  r1 : Int,
+  r2 : Int,
+  alpha : Double,
+) -> Unit {
   for c = 0; c < self.cols; c = c + 1 {
     let val = self.get(r1, c) + alpha * self.get(r2, c)
     self.set(r1, c, val)
   }
 }
 
+///|
 /// Computes Frobenius norm of matrix.
 pub fn Matrix::norm_frobenius(self : Matrix) -> Double {
   let mut sum_sq = 0.0
@@ -151,6 +178,7 @@ pub fn Matrix::norm_frobenius(self : Matrix) -> Double {
   sum_sq.sqrt()
 }
 
+///|
 /// Computes infinity norm (max row sum).
 pub fn Matrix::norm_inf(self : Matrix) -> Double {
   let mut max_sum = 0.0

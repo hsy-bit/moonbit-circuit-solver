@@ -1,0 +1,123 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/linalg"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn conjugate_gradient_solve(Matrix, Vector, Int, Double) -> IterativeResult
+
+pub fn determinant(Matrix) -> Double
+
+pub fn gaussian_solve(Matrix, Vector) -> SolverResult
+
+pub fn jacobi_solve(Matrix, Vector, Int, Double) -> IterativeResult
+
+pub fn matrix_inverse(Matrix) -> Matrix
+
+// Errors
+
+// Types and methods
+pub struct CsrMatrix {
+  rows : Int
+  cols : Int
+  row_ptr : Array[Int]
+  col_ind : Array[Int]
+  values : Array[Double]
+} derive(Eq, @debug.Debug)
+pub fn CsrMatrix::from_dense(Matrix) -> Self
+pub fn CsrMatrix::get(Self, Int, Int) -> Double
+pub fn CsrMatrix::multiply_vector(Self, Vector) -> Vector
+pub fn CsrMatrix::nnz(Self) -> Int
+pub fn CsrMatrix::to_dense(Self) -> Matrix
+
+pub struct IterativeResult {
+  solution : Vector
+  stats : IterativeStats
+} derive(Eq, @debug.Debug)
+
+pub struct IterativeStats {
+  iterations : Int
+  residual_norm : Double
+  converged : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct LuDecomposition {
+  n : Int
+  lu_mat : Matrix
+  pivots : Array[Int]
+  sign : Int
+} derive(Eq, @debug.Debug)
+pub fn LuDecomposition::decompose(Matrix) -> Self
+pub fn LuDecomposition::solve(Self, Vector) -> Vector
+pub fn LuDecomposition::solve_lower(Self, Vector) -> Vector
+pub fn LuDecomposition::solve_upper(Self, Vector) -> Vector
+
+pub struct Matrix {
+  rows : Int
+  cols : Int
+  data : Array[Double]
+} derive(Eq, @debug.Debug)
+pub fn Matrix::add_row_multiple(Self, Int, Int, Double) -> Unit
+pub fn Matrix::add_to_element(Self, Int, Int, Double) -> Unit
+pub fn Matrix::copy(Self) -> Self
+pub fn Matrix::get(Self, Int, Int) -> Double
+pub fn Matrix::identity(Int) -> Self
+pub fn Matrix::make(Int, Int, Double) -> Self
+pub fn Matrix::multiply(Self, Self) -> Self
+pub fn Matrix::multiply_vector(Self, Vector) -> Vector
+pub fn Matrix::norm_frobenius(Self) -> Double
+pub fn Matrix::norm_inf(Self) -> Double
+pub fn Matrix::num_cols(Self) -> Int
+pub fn Matrix::num_rows(Self) -> Int
+pub fn Matrix::scale_row(Self, Int, Double) -> Unit
+pub fn Matrix::set(Self, Int, Int, Double) -> Unit
+pub fn Matrix::swap_rows(Self, Int, Int) -> Unit
+pub fn Matrix::transpose(Self) -> Self
+pub fn Matrix::zeros(Int, Int) -> Self
+
+pub struct MatrixTriplet {
+  row : Int
+  col : Int
+  val : Double
+} derive(Eq, @debug.Debug)
+
+pub enum SolverResult {
+  Success(Vector)
+  SingularMatrix(String)
+} derive(Eq, @debug.Debug)
+
+pub struct SparseBuilder {
+  rows : Int
+  cols : Int
+  triplets : Array[MatrixTriplet]
+} derive(Eq, @debug.Debug)
+pub fn SparseBuilder::add_entry(Self, Int, Int, Double) -> Unit
+pub fn SparseBuilder::new(Int, Int) -> Self
+pub fn SparseBuilder::to_csr(Self) -> CsrMatrix
+
+pub struct Vector {
+  data : Array[Double]
+} derive(Eq, @debug.Debug)
+pub fn Vector::add(Self, Self) -> Self
+pub fn Vector::axpy_inplace(Self, Double, Self) -> Unit
+pub fn Vector::copy(Self) -> Self
+pub fn Vector::dot(Self, Self) -> Double
+pub fn Vector::from_array(Array[Double]) -> Self
+pub fn Vector::get(Self, Int) -> Double
+pub fn Vector::length(Self) -> Int
+pub fn Vector::make(Int, Double) -> Self
+pub fn Vector::max_diff(Self, Self) -> Double
+pub fn Vector::norm_l1(Self) -> Double
+pub fn Vector::norm_l2(Self) -> Double
+pub fn Vector::norm_linf(Self) -> Double
+pub fn Vector::scale(Self, Double) -> Self
+pub fn Vector::scale_inplace(Self, Double) -> Unit
+pub fn Vector::set(Self, Int, Double) -> Unit
+pub fn Vector::sub(Self, Self) -> Self
+pub fn Vector::zeros(Int) -> Self
+
+// Type aliases
+
+// Traits

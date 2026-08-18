@@ -1,6 +1,7 @@
 // Linear Algebra Module - Sparse Matrix (CSR & Triplet Builder)
 // MoonBit Circuit Solver Engine
 
+///|
 /// Triplet entry used during dynamic sparse matrix assembly.
 pub struct MatrixTriplet {
   row : Int
@@ -8,6 +9,7 @@ pub struct MatrixTriplet {
   val : Double
 } derive(Debug, Eq)
 
+///|
 /// Builder for dynamically assembling sparse matrices via triplets.
 pub struct SparseBuilder {
   rows : Int
@@ -15,18 +17,26 @@ pub struct SparseBuilder {
   triplets : Array[MatrixTriplet]
 } derive(Debug, Eq)
 
+///|
 /// Creates a new SparseBuilder for an N x M matrix.
 pub fn SparseBuilder::new(rows : Int, cols : Int) -> SparseBuilder {
   SparseBuilder::{ rows, cols, triplets: [] }
 }
 
+///|
 /// Adds a value to element (row, col).
-pub fn SparseBuilder::add_entry(self : SparseBuilder, row : Int, col : Int, val : Double) -> Unit {
+pub fn SparseBuilder::add_entry(
+  self : SparseBuilder,
+  row : Int,
+  col : Int,
+  val : Double,
+) -> Unit {
   if val != 0.0 {
     self.triplets.push(MatrixTriplet::{ row, col, val })
   }
 }
 
+///|
 /// Compressed Sparse Row (CSR) format matrix.
 pub struct CsrMatrix {
   rows : Int
@@ -36,6 +46,7 @@ pub struct CsrMatrix {
   values : Array[Double]
 } derive(Debug, Eq)
 
+///|
 /// Converts a SparseBuilder into a compressed CSR matrix.
 pub fn SparseBuilder::to_csr(self : SparseBuilder) -> CsrMatrix {
   let num_triplets = self.triplets.length()
@@ -72,6 +83,7 @@ pub fn SparseBuilder::to_csr(self : SparseBuilder) -> CsrMatrix {
   CsrMatrix::{ rows: self.rows, cols: self.cols, row_ptr, col_ind, values }
 }
 
+///|
 /// Converts a dense Matrix into CSR format.
 pub fn CsrMatrix::from_dense(mat : Matrix) -> CsrMatrix {
   let rows = mat.num_rows()
@@ -88,6 +100,7 @@ pub fn CsrMatrix::from_dense(mat : Matrix) -> CsrMatrix {
   builder.to_csr()
 }
 
+///|
 /// Converts CSR matrix back to dense Matrix format.
 pub fn CsrMatrix::to_dense(self : CsrMatrix) -> Matrix {
   let mat = Matrix::zeros(self.rows, self.cols)
@@ -103,6 +116,7 @@ pub fn CsrMatrix::to_dense(self : CsrMatrix) -> Matrix {
   mat
 }
 
+///|
 /// Matrix-vector multiplication for CSR matrix: y = A * x.
 pub fn CsrMatrix::multiply_vector(self : CsrMatrix, x : Vector) -> Vector {
   if self.cols != x.length() {
@@ -123,11 +137,13 @@ pub fn CsrMatrix::multiply_vector(self : CsrMatrix, x : Vector) -> Vector {
   Vector::from_array(y)
 }
 
+///|
 /// Returns the number of non-zero entries.
 pub fn CsrMatrix::nnz(self : CsrMatrix) -> Int {
   self.values.length()
 }
 
+///|
 /// Element lookup at (row, col) in CSR matrix.
 pub fn CsrMatrix::get(self : CsrMatrix, r : Int, c : Int) -> Double {
   if r < 0 || r >= self.rows || c < 0 || c >= self.cols {

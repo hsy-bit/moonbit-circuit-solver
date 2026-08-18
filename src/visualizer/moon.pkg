@@ -1,0 +1,8 @@
+import {
+  "hsy-bit/moonbit-circuit-solver/src/mna",
+  "hsy-bit/moonbit-circuit-solver/src/transient",
+}
+
+options(
+  "is-main": false,
+)

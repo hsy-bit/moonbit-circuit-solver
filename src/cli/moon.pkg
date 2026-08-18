@@ -1,0 +1,5 @@
+import {
+  "hsy-bit/moonbit-circuit-solver/src/circuit",
+}
+
+pkgtype(kind: "executable")

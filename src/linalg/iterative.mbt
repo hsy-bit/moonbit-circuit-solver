@@ -1,6 +1,7 @@
 // Linear Algebra Module - Iterative Linear Solvers (GMRES & CG)
 // MoonBit Circuit Solver Engine
 
+///|
 /// Solver statistics for iterative algorithms.
 pub struct IterativeStats {
   iterations : Int
@@ -8,14 +9,21 @@ pub struct IterativeStats {
   converged : Bool
 } derive(Debug, Eq)
 
+///|
 /// Result of iterative solver execution.
 pub struct IterativeResult {
   solution : Vector
   stats : IterativeStats
 } derive(Debug, Eq)
 
+///|
 /// Solves A * x = b using Jacobi Iteration method.
-pub fn jacobi_solve(a_mat : Matrix, b_vec : Vector, max_iter : Int, tol : Double) -> IterativeResult {
+pub fn jacobi_solve(
+  a_mat : Matrix,
+  b_vec : Vector,
+  max_iter : Int,
+  tol : Double,
+) -> IterativeResult {
   let n = a_mat.num_rows()
   let x = Vector::zeros(n)
   let x_new = Vector::zeros(n)
@@ -50,12 +58,22 @@ pub fn jacobi_solve(a_mat : Matrix, b_vec : Vector, max_iter : Int, tol : Double
 
   IterativeResult::{
     solution: x,
-    stats: IterativeStats::{ iterations: iter, residual_norm: res_norm, converged: is_conv }
+    stats: IterativeStats::{
+      iterations: iter,
+      residual_norm: res_norm,
+      converged: is_conv,
+    },
   }
 }
 
+///|
 /// Solves symmetric positive-definite system A * x = b using Conjugate Gradient method.
-pub fn conjugate_gradient_solve(a_mat : Matrix, b_vec : Vector, max_iter : Int, tol : Double) -> IterativeResult {
+pub fn conjugate_gradient_solve(
+  a_mat : Matrix,
+  b_vec : Vector,
+  max_iter : Int,
+  tol : Double,
+) -> IterativeResult {
   let n = a_mat.num_rows()
   let x = Vector::zeros(n)
   // r = b - A * x (with x = 0, r = b)
@@ -92,6 +110,10 @@ pub fn conjugate_gradient_solve(a_mat : Matrix, b_vec : Vector, max_iter : Int, 
 
   IterativeResult::{
     solution: x,
-    stats: IterativeStats::{ iterations: iter, residual_norm: rs_old.sqrt(), converged: is_conv }
+    stats: IterativeStats::{
+      iterations: iter,
+      residual_norm: rs_old.sqrt(),
+      converged: is_conv,
+    },
   }
 }

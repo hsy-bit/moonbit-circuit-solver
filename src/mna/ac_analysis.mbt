@@ -1,6 +1,7 @@
 // Modified Nodal Analysis - AC Frequency Domain Analysis
 // MoonBit Circuit Solver Engine
 
+///|
 /// AC sweep data point containing node magnitude and phase.
 pub struct AcPoint {
   freq : Double
@@ -8,20 +9,22 @@ pub struct AcPoint {
   phase_deg : Map[String, Double]
 } derive(Debug, Eq)
 
+///|
 /// Result of full AC frequency sweep analysis.
 pub struct AcResult {
   sweep_points : Array[AcPoint]
 } derive(Debug, Eq)
 
+///|
 /// Computes AC magnitude in decibels (dB): 20 * log10(val).
 pub fn to_db(mag : Double) -> Double {
   if mag <= 0.0 {
     return -120.0
   }
-  // 20 * ln(mag) / ln(10)
-  20.0 * (mag.ln() / 2.302585092994046)
+  20.0 * @math.log10(mag)
 }
 
+///|
 /// Solves AC frequency domain response for given frequency `f_hz`.
 pub fn solve_ac_at_freq(netlist : @spice.Netlist, f_hz : Double) -> AcPoint {
   let omega = 2.0 * 3.141592653589793 * f_hz
@@ -34,7 +37,7 @@ pub fn solve_ac_at_freq(netlist : @spice.Netlist, f_hz : Double) -> AcPoint {
         let n1 = indexer.get_or_add_node(n1_str)
         let n2 = indexer.get_or_add_node(n2_str)
         let _g_ac = omega * c_val // magnitude of Y = j * omega * C
-        stamp_resistor(a_mat, n1, n2, 1.0 / (_g_ac + 1e-12))
+        stamp_resistor(a_mat, n1, n2, 1.0 / (_g_ac + 0.000000000001))
       }
       Inductor(name, n1_str, n2_str, l_val, _) => {
         let n1 = indexer.get_or_add_node(n1_str)
@@ -53,8 +56,8 @@ pub fn solve_ac_at_freq(netlist : @spice.Netlist, f_hz : Double) -> AcPoint {
     SingularMatrix(_) => @linalg.Vector::zeros(indexer.total_size())
   }
 
-  let mag_map : Map[String, Double] = Map::new()
-  let phase_map : Map[String, Double] = Map::new()
+  let mag_map : Map[String, Double] = Map([])
+  let phase_map : Map[String, Double] = Map([])
 
   let n_nodes = indexer.node_count()
   for i = 0; i < n_nodes; i = i + 1 {
@@ -66,4 +69,25 @@ pub fn solve_ac_at_freq(netlist : @spice.Netlist, f_hz : Double) -> AcPoint {
   }
 
   AcPoint::{ freq: f_hz, magnitude: mag_map, phase_deg: phase_map }
+}
+
+///|
+/// Runs AC sweep over frequency points and returns AcResult.
+pub fn solve_ac_sweep(
+  netlist : @spice.Netlist,
+  fstart : Double,
+  fstop : Double,
+  points : Int,
+) -> AcResult {
+  let pts : Array[AcPoint] = []
+  if points <= 1 {
+    pts.push(solve_ac_at_freq(netlist, fstart))
+  } else {
+    let df = (fstop - fstart) / (points - 1).to_double()
+    for i = 0; i < points; i = i + 1 {
+      let f = fstart + df * i.to_double()
+      pts.push(solve_ac_at_freq(netlist, f))
+    }
+  }
+  AcResult::{ sweep_points: pts }
 }

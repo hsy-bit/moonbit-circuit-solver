@@ -1,12 +1,14 @@
 // Linear Algebra Module - Direct Solvers (Gaussian Elimination)
 // MoonBit Circuit Solver Engine
 
+///|
 /// Result of linear system solution.
 pub enum SolverResult {
   Success(Vector)
   SingularMatrix(String)
 } derive(Debug, Eq)
 
+///|
 /// Solves dense linear system A * x = b using Gaussian elimination with partial pivoting.
 pub fn gaussian_solve(a_mat : Matrix, b_vec : Vector) -> SolverResult {
   let n = a_mat.num_rows()
@@ -80,6 +82,7 @@ pub fn gaussian_solve(a_mat : Matrix, b_vec : Vector) -> SolverResult {
   Success(Vector::from_array(x))
 }
 
+///|
 /// Inverts a square matrix using Gauss-Jordan elimination.
 pub fn matrix_inverse(a_mat : Matrix) -> Matrix {
   let n = a_mat.num_rows()
@@ -136,6 +139,7 @@ pub fn matrix_inverse(a_mat : Matrix) -> Matrix {
   inv
 }
 
+///|
 /// Computes determinant of square matrix via LU reduction.
 pub fn determinant(a_mat : Matrix) -> Double {
   let n = a_mat.num_rows()
