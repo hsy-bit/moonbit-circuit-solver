@@ -87,6 +87,10 @@ pub fn parse_waveform_spec(
       i = i + 2
     }
     Pwl(pts)
+  } else if (first == "DC" || first.has_prefix("DC")) &&
+    tok_arr.length() > start_idx + 1 {
+    let v_val = parse_spice_number(tok_arr[start_idx + 1])
+    Dc(v_val)
   } else {
     let v_val = parse_spice_number(tok_arr[start_idx])
     Dc(v_val)

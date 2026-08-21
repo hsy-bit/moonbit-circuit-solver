@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/benchmarks"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct BenchmarkHarness {
+  total_suites : Int
+  total_tests : Int
+} derive(Eq, @debug.Debug)
+pub fn BenchmarkHarness::default() -> Self
+
+// Type aliases
+
+// Traits

@@ -30,6 +30,12 @@ pub fn solve_nonlinear_dc(
     let a_mat = a_mat_base.copy()
     let z_vec = z_vec_base.copy()
 
+    // Add Gmin diagonal shunt to prevent matrix singularity on floating nodes
+    let n_nodes = indexer.node_count()
+    for i = 0; i < n_nodes; i = i + 1 {
+      a_mat.add_to_element(i, i, 1.0e-12)
+    }
+
     // Stamp non-linear semiconductor companions
     for comp in netlist.components {
       match comp {

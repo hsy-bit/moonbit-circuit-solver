@@ -32,8 +32,25 @@ pub fn evaluate_bjt(
   let vbe_eff = s * vbe
   let vbc_eff = s * vbc
 
-  let exp_be = @math.exp(vbe_eff / vt)
-  let exp_bc = @math.exp(vbc_eff / vt)
+  let arg_be = vbe_eff / vt
+  let safe_be = if arg_be > 35.0 {
+    35.0
+  } else if arg_be < -35.0 {
+    -35.0
+  } else {
+    arg_be
+  }
+  let exp_be = @math.exp(safe_be)
+
+  let arg_bc = vbc_eff / vt
+  let safe_bc = if arg_bc > 35.0 {
+    35.0
+  } else if arg_bc < -35.0 {
+    -35.0
+  } else {
+    arg_bc
+  }
+  let exp_bc = @math.exp(safe_bc)
 
   let if_curr = is_val * (exp_be - 1.0)
   let ir_curr = is_val * (exp_bc - 1.0)

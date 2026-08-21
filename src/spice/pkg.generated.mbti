@@ -27,14 +27,14 @@ pub fn split_line_tokens(String) -> Array[String]
 // Errors
 
 // Types and methods
-pub enum AnalysisCommand {
+pub(all) enum AnalysisCommand {
   Op
   Dc(String, Double, Double, Double)
   Ac(String, Int, Double, Double)
   Tran(Double, Double, Double)
 } derive(Eq, @debug.Debug)
 
-pub enum Component {
+pub(all) enum Component {
   Resistor(String, String, String, Double)
   Capacitor(String, String, String, Double, Double)
   Inductor(String, String, String, Double, Double)
@@ -62,12 +62,12 @@ pub struct Lexer {
 pub fn Lexer::new(String) -> Self
 pub fn Lexer::next_token(Self) -> Token
 
-pub struct ModelDef {
+pub(all) struct ModelDef {
   name : String
   kind : ModelKind
 } derive(Eq, @debug.Debug)
 
-pub enum ModelKind {
+pub(all) enum ModelKind {
   DiodeModel(Double, Double, Double)
   BjtModel(Double, Double, Double, Bool)
   MosfetModel(Double, Double, Double, Bool)
@@ -79,7 +79,7 @@ pub struct ModelRegistry {
 pub fn ModelRegistry::default() -> Self
 pub fn ModelRegistry::lookup(Self, String) -> ModelDef?
 
-pub struct Netlist {
+pub(all) struct Netlist {
   title : String
   components : Array[Component]
   models : Array[ModelDef]
@@ -134,7 +134,7 @@ pub enum Token {
   TokEof
 } derive(Eq, @debug.Debug)
 
-pub enum Waveform {
+pub(all) enum Waveform {
   Dc(Double)
   Pulse(Double, Double, Double, Double, Double, Double, Double)
   Sine(Double, Double, Double, Double, Double)

@@ -1,0 +1,15 @@
+import {
+  "moonbitlang/core/math",
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
+  "hsy-bit/moonbit-circuit-solver/src/spice",
+  "hsy-bit/moonbit-circuit-solver/src/mna",
+  "hsy-bit/moonbit-circuit-solver/src/nonlinear",
+  "hsy-bit/moonbit-circuit-solver/src/transient",
+  "hsy-bit/moonbit-circuit-solver/src/visualizer",
+  "hsy-bit/moonbit-circuit-solver/src/symbolic",
+  "hsy-bit/moonbit-circuit-solver/src/circuit",
+}
+
+options(
+  "is-main": false,
+)

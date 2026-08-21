@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/math",
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
   "hsy-bit/moonbit-circuit-solver/src/mna",
   "hsy-bit/moonbit-circuit-solver/src/transient",
 }

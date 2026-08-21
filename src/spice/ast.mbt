@@ -3,7 +3,7 @@
 
 ///|
 /// Independent source waveform type.
-pub enum Waveform {
+pub(all) enum Waveform {
   Dc(Double)
   Pulse(Double, Double, Double, Double, Double, Double, Double) // v1, v2, delay, rise, fall, width, period
   Sine(Double, Double, Double, Double, Double) // offset, amp, freq, delay, damping
@@ -12,7 +12,7 @@ pub enum Waveform {
 
 ///|
 /// Semiconductor model type.
-pub enum ModelKind {
+pub(all) enum ModelKind {
   DiodeModel(Double, Double, Double) // Is, N, Vt
   BjtModel(Double, Double, Double, Bool) // Is, Bf, Br, is_npn
   MosfetModel(Double, Double, Double, Bool) // Vth, Kp, Lambda, is_nmos
@@ -20,14 +20,14 @@ pub enum ModelKind {
 
 ///|
 /// Model definition directive (.model).
-pub struct ModelDef {
+pub(all) struct ModelDef {
   name : String
   kind : ModelKind
 } derive(Debug, Eq)
 
 ///|
 /// Component types supported in SPICE netlist.
-pub enum Component {
+pub(all) enum Component {
   Resistor(String, String, String, Double) // name, node+, node-, R
   Capacitor(String, String, String, Double, Double) // name, node+, node-, C, ic
   Inductor(String, String, String, Double, Double) // name, node+, node-, L, ic
@@ -89,7 +89,7 @@ pub fn Component::create_dc_vsource(
 
 ///|
 /// Type of simulation analysis requested.
-pub enum AnalysisCommand {
+pub(all) enum AnalysisCommand {
   Op // .op
   Dc(String, Double, Double, Double) // .dc src_name start stop step
   Ac(String, Int, Double, Double) // .ac type points fstart fstop
@@ -98,7 +98,7 @@ pub enum AnalysisCommand {
 
 ///|
 /// Represents a complete parsed SPICE circuit netlist.
-pub struct Netlist {
+pub(all) struct Netlist {
   title : String
   components : Array[Component]
   models : Array[ModelDef]

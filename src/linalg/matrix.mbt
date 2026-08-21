@@ -190,6 +190,34 @@ pub fn Matrix::norm_frobenius(self : Matrix) -> Double {
 }
 
 ///|
+/// Adds two dense matrices element-wise.
+pub fn Matrix::add(self : Matrix, other : Matrix) -> Matrix {
+  if self.rows != other.rows || self.cols != other.cols {
+    abort("Matrix dimension mismatch in add")
+  }
+  let total = self.rows * self.cols
+  let res = Array::make(total, 0.0)
+  for i = 0; i < total; i = i + 1 {
+    res[i] = self.data[i] + other.data[i]
+  }
+  Matrix::{ rows: self.rows, cols: self.cols, data: res }
+}
+
+///|
+/// Subtracts another dense matrix element-wise.
+pub fn Matrix::sub(self : Matrix, other : Matrix) -> Matrix {
+  if self.rows != other.rows || self.cols != other.cols {
+    abort("Matrix dimension mismatch in sub")
+  }
+  let total = self.rows * self.cols
+  let res = Array::make(total, 0.0)
+  for i = 0; i < total; i = i + 1 {
+    res[i] = self.data[i] - other.data[i]
+  }
+  Matrix::{ rows: self.rows, cols: self.cols, data: res }
+}
+
+///|
 /// Computes infinity norm (max row sum).
 pub fn Matrix::norm_inf(self : Matrix) -> Double {
   let mut max_sum = 0.0

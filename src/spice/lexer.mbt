@@ -52,11 +52,13 @@ pub fn parse_spice_number(s : String) -> Double {
     return 0.0
   }
 
-  // Parse double using standard float parser logic
   let mut integer_part = 0.0
   let mut frac_part = 0.0
   let mut frac_div = 1.0
   let mut in_frac = false
+  let mut in_exp = false
+  let mut exp_val = 0.0
+  let mut exp_neg = false
   let mut is_neg = false
   let mut idx = 0
 
@@ -69,7 +71,20 @@ pub fn parse_spice_number(s : String) -> Double {
 
   while idx < num_str.length() {
     let c = num_str[idx]
-    if c == '.' {
+    if c == 'e' || c == 'E' {
+      in_exp = true
+      if idx + 1 < num_str.length() && num_str[idx + 1] == '-' {
+        exp_neg = true
+        idx = idx + 1
+      } else if idx + 1 < num_str.length() && num_str[idx + 1] == '+' {
+        idx = idx + 1
+      }
+    } else if in_exp {
+      if c >= '0' && c <= '9' {
+        let digit = (c.to_int() - '0'.to_int()).to_double()
+        exp_val = exp_val * 10.0 + digit
+      }
+    } else if c == '.' {
       in_frac = true
     } else if c >= '0' && c <= '9' {
       let digit = (c.to_int() - '0'.to_int()).to_double()
@@ -84,6 +99,10 @@ pub fn parse_spice_number(s : String) -> Double {
   }
 
   val = integer_part + frac_part
+  if in_exp {
+    let final_exp = if exp_neg { -exp_val } else { exp_val }
+    val = val * @math.pow(10.0, final_exp)
+  }
   if is_neg {
     val = -val
   }

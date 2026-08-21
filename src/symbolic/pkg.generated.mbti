@@ -1,0 +1,113 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hsy-bit/moonbit-circuit-solver/src/symbolic"
+
+import {
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn design_sallen_key_low_pass(Double, Double, Double) -> SallenKeyLowPassDesign
+
+pub fn generate_bessel_polynomial(Int) -> Polynomial
+
+pub fn solve_symbolic_transfer_function(PolyMatrix, Array[Polynomial], Int) -> TransferFunction
+
+pub fn synthesize_butterworth_polynomial(Int) -> Polynomial
+
+pub fn synthesize_chebyshev1_poles(Int, Double) -> Array[@linalg.Complex]
+
+// Errors
+
+// Types and methods
+pub(all) enum FilterType {
+  Butterworth
+  Chebyshev1(Double)
+  Bessel
+} derive(Eq, @debug.Debug)
+
+pub struct MimoStateSpace {
+  a_mat : @linalg.Matrix
+  b_mat : @linalg.Matrix
+  c_mat : @linalg.Matrix
+  d_mat : @linalg.Matrix
+  states : Int
+  inputs : Int
+  outputs : Int
+} derive(Eq, @debug.Debug)
+pub fn MimoStateSpace::controllability_matrix(Self) -> @linalg.Matrix
+pub fn MimoStateSpace::evaluate_frequency_response(Self, Double) -> @linalg.ComplexMatrix
+pub fn MimoStateSpace::new(@linalg.Matrix, @linalg.Matrix, @linalg.Matrix, @linalg.Matrix) -> Self
+pub fn MimoStateSpace::observability_matrix(Self) -> @linalg.Matrix
+
+pub struct PolyMatrix {
+  rows : Int
+  cols : Int
+  data : Array[Polynomial]
+} derive(Eq, @debug.Debug)
+pub fn PolyMatrix::add_to_entry(Self, Int, Int, Polynomial) -> Unit
+pub fn PolyMatrix::determinant(Self) -> Polynomial
+pub fn PolyMatrix::get(Self, Int, Int) -> Polynomial
+pub fn PolyMatrix::set(Self, Int, Int, Polynomial) -> Unit
+pub fn PolyMatrix::zeros(Int, Int) -> Self
+
+pub struct Polynomial {
+  coeffs : Array[Double]
+} derive(Eq, @debug.Debug)
+pub fn Polynomial::add(Self, Self) -> Self
+pub fn Polynomial::coeff(Self, Int) -> Double
+pub fn Polynomial::constant(Double) -> Self
+pub fn Polynomial::degree(Self) -> Int
+pub fn Polynomial::derivative(Self) -> Self
+pub fn Polynomial::eval_complex(Self, @linalg.Complex) -> @linalg.Complex
+pub fn Polynomial::eval_real(Self, Double) -> Double
+pub fn Polynomial::find_roots(Self, Int, Double) -> Array[@linalg.Complex]
+pub fn Polynomial::from_coeffs(Array[Double]) -> Self
+pub fn Polynomial::mul(Self, Self) -> Self
+pub fn Polynomial::s() -> Self
+pub fn Polynomial::scale(Self, Double) -> Self
+pub fn Polynomial::sub(Self, Self) -> Self
+
+pub struct PolynomialMatrix {
+  rows : Int
+  cols : Int
+  data : Array[Polynomial]
+} derive(Eq, @debug.Debug)
+pub fn PolynomialMatrix::add(Self, Self) -> Self
+pub fn PolynomialMatrix::determinant_2x2(Self) -> Polynomial
+pub fn PolynomialMatrix::evaluate_s(Self, @linalg.Complex) -> @linalg.ComplexMatrix
+pub fn PolynomialMatrix::get(Self, Int, Int) -> Polynomial
+pub fn PolynomialMatrix::multiply(Self, Self) -> Self
+pub fn PolynomialMatrix::set(Self, Int, Int, Polynomial) -> Unit
+pub fn PolynomialMatrix::zeros(Int, Int) -> Self
+
+pub struct SallenKeyLowPassDesign {
+  r1 : Double
+  r2 : Double
+  c1 : Double
+  c2 : Double
+  fc_hz : Double
+  q_factor : Double
+  tf : TransferFunction
+} derive(Eq, @debug.Debug)
+
+pub struct TransferFunction {
+  num : Polynomial
+  den : Polynomial
+} derive(Eq, @debug.Debug)
+pub fn TransferFunction::biquad_band_pass(Double, Double, Double) -> Self
+pub fn TransferFunction::biquad_low_pass(Double, Double, Double) -> Self
+pub fn TransferFunction::cascade(Self, Self) -> Self
+pub fn TransferFunction::dc_gain(Self) -> Double
+pub fn TransferFunction::eval_frequency(Self, Double) -> @linalg.Complex
+pub fn TransferFunction::feedback(Self, Self) -> Self
+pub fn TransferFunction::high_pass_1st(Double, Double) -> Self
+pub fn TransferFunction::low_pass_1st(Double, Double) -> Self
+pub fn TransferFunction::magnitude_db(Self, Double) -> Double
+pub fn TransferFunction::new(Polynomial, Polynomial) -> Self
+pub fn TransferFunction::parallel(Self, Self) -> Self
+pub fn TransferFunction::phase_deg(Self, Double) -> Double
+
+// Type aliases
+
+// Traits

@@ -2,20 +2,53 @@
 package "hsy-bit/moonbit-circuit-solver/src/transient"
 
 import {
+  "hsy-bit/moonbit-circuit-solver/src/linalg",
   "hsy-bit/moonbit-circuit-solver/src/spice",
   "moonbitlang/core/debug",
 }
 
 // Values
+pub const TR_BDF2_GAMMA : Double = 0.585786437626905
+
+pub fn apply_fft_window(Array[Double], FftWindow) -> Array[Double]
+
 pub fn available_schemes() -> Array[IntegrationScheme]
 
 pub fn calculate_next_dt(Double, Double, Double, Double, Double) -> Double
 
+pub fn cash_karp_step((Double, @linalg.Vector) -> @linalg.Vector, Double, @linalg.Vector, Double, Double, Double) -> EmbeddedRkStep
+
+pub fn compute_cwt_energy_at_scale(Array[Double], Double, Double) -> Double
+
+pub fn compute_hilbert_transform(Array[Double]) -> Array[Double]
+
+pub fn compute_matrix_exp(@linalg.Matrix) -> @linalg.Matrix
+
+pub fn compute_transient_fft_analysis(Array[Double], Array[Double], Double, FftWindow) -> FftAnalysisResult
+
+pub fn cooley_tukey_fft(Array[@linalg.Complex], Bool) -> Array[@linalg.Complex]
+
+pub fn discretize_state_space_zoh(StateSpaceModel, Double) -> (@linalg.Matrix, @linalg.Matrix)
+
+pub fn dwt_db4_forward(Array[Double]) -> DwtDecomposition
+
+pub fn estimate_tr_bdf2_lte(Double, Double, Double, Double) -> Double
+
+pub fn evaluate_gear_bdf_cap(Double, Array[Double], Double, GearOrder) -> GearCapCompanion
+
+pub fn evaluate_tr_bdf2_cap(Double, Double, Double, Double, Double) -> TrBdf2Companion
+
 pub fn evaluate_waveform_at_t(@spice.Waveform, Double) -> Double
+
+pub fn extract_analytic_signal(Array[Double]) -> AnalyticSignal
 
 pub fn get_cap_companion(IntegrationScheme, Double, Double, Double, Double) -> CapCompanion
 
 pub fn get_ind_companion(IntegrationScheme, Double, Double, Double, Double) -> IndCompanion
+
+pub fn morlet_wavelet(Double, Double, Double) -> @linalg.Complex
+
+pub fn simulate_state_space(StateSpaceModel, @linalg.Vector, Array[@linalg.Vector], Double) -> Array[@linalg.Vector]
 
 pub fn solve_transient(@spice.Netlist, Double, Double, Double) -> TransientResult
 
@@ -28,9 +61,73 @@ pub fn solve_transient_rk4(@spice.Netlist, Double, Double) -> TransientResult
 // Errors
 
 // Types and methods
+pub struct AnalyticSignal {
+  envelope : Array[Double]
+  phase : Array[Double]
+  analytic_complex : Array[@linalg.Complex]
+} derive(Eq, @debug.Debug)
+
 pub struct CapCompanion {
   req : Double
   ieq : Double
+} derive(Eq, @debug.Debug)
+
+pub struct DigitalEvent {
+  time : Double
+  delta_cycle : Int
+  net_name : String
+  new_state : LogicState
+} derive(Eq, @debug.Debug)
+
+pub struct DwtDecomposition {
+  approx : Array[Double]
+  detail : Array[Double]
+} derive(Eq, @debug.Debug)
+
+pub struct EmbeddedRkStep {
+  y_next : @linalg.Vector
+  error_estimate : Double
+  suggested_dt : Double
+  is_accepted : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct FftAnalysisResult {
+  fundamental_freq_hz : Double
+  sampling_rate_hz : Double
+  num_samples : Int
+  thd_percent : Double
+  snr_db : Double
+  sinad_db : Double
+  enob_bits : Double
+  harmonics : Array[FftHarmonicBin]
+} derive(Eq, @debug.Debug)
+
+pub struct FftHarmonicBin {
+  harmonic_index : Int
+  frequency_hz : Double
+  magnitude : Double
+  phase_deg : Double
+  magnitude_db : Double
+} derive(Eq, @debug.Debug)
+
+pub(all) enum FftWindow {
+  Rectangular
+  Hanning
+  Hamming
+  Blackman
+} derive(Eq, @debug.Debug)
+
+pub struct GearCapCompanion {
+  g_eq : Double
+  i_eq : Double
+} derive(Eq, @debug.Debug)
+
+pub(all) enum GearOrder {
+  Bdf1
+  Bdf2
+  Bdf3
+  Bdf4
+  Bdf5
 } derive(Eq, @debug.Debug)
 
 pub struct IndCompanion {
@@ -42,6 +139,44 @@ pub enum IntegrationScheme {
   BackwardEuler
   Trapezoidal
   Gear2
+} derive(Eq, @debug.Debug)
+
+pub(all) enum LogicState {
+  Logic0
+  Logic1
+  LogicZ
+  LogicX
+} derive(Eq, @debug.Debug)
+
+pub struct MixedSignalEngine {
+  mut current_time : Double
+  events : Array[DigitalEvent]
+  signal_states : Map[String, LogicState]
+  analog_threshold_low : Double
+  analog_threshold_high : Double
+} derive(Eq, @debug.Debug)
+pub fn MixedSignalEngine::analog_to_digital(Self, Double) -> LogicState
+pub fn MixedSignalEngine::digital_to_analog(Self, LogicState, Double) -> Double
+pub fn MixedSignalEngine::new(Double, Double) -> Self
+pub fn MixedSignalEngine::process_until(Self, Double) -> Array[DigitalEvent]
+pub fn MixedSignalEngine::schedule_event(Self, Double, String, LogicState) -> Unit
+
+pub struct StateSpaceModel {
+  a_mat : @linalg.Matrix
+  b_mat : @linalg.Matrix
+  c_mat : @linalg.Matrix
+  d_mat : @linalg.Matrix
+  num_states : Int
+  num_inputs : Int
+  num_outputs : Int
+} derive(Eq, @debug.Debug)
+pub fn StateSpaceModel::new(@linalg.Matrix, @linalg.Matrix, @linalg.Matrix, @linalg.Matrix) -> Self
+
+pub struct TrBdf2Companion {
+  stage1_req : Double
+  stage1_ieq : Double
+  stage2_req : Double
+  stage2_ieq : Double
 } derive(Eq, @debug.Debug)
 
 pub struct TransientResult {

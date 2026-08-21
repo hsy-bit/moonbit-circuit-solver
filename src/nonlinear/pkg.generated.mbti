@@ -9,25 +9,122 @@ import {
 }
 
 // Values
+pub fn evaluate_advanced_mosfet(AdvancedMosfetParams, Double, Double, Double, Double) -> AdvancedMosfetCompanion
+
 pub fn evaluate_bjt(Double, Double, Double, Double, Double, Bool) -> BjtCompanion
+
+pub fn evaluate_bsim4_extended(Bsim4ExtendedParams, Double, Double, Double) -> Bsim4ExtendedCompanion
+
+pub fn evaluate_cmos_inverter(LogicGateParams, Double) -> (Double, Double)
+
+pub fn evaluate_cmos_nand2(LogicGateParams, Double, Double) -> Double
+
+pub fn evaluate_cmos_nor2(LogicGateParams, Double, Double) -> Double
+
+pub fn evaluate_cmos_xor2(LogicGateParams, Double, Double) -> Double
 
 pub fn evaluate_diode(Double, Double, Double, Double) -> DiodeCompanion
 
+pub fn evaluate_ekv_mosfet(EkvMosfetParams, Double, Double, Double, Double) -> EkvCompanion
+
+pub fn evaluate_gummel_poon(GummelPoonParams, Double, Double, Double) -> GummelPoonCompanion
+
+pub fn evaluate_jfet(JfetParams, Double, Double, Double) -> JfetCompanion
+
+pub fn evaluate_memristor_step(MemristorParams, Double, Double, Double) -> (Double, Double)
+
 pub fn evaluate_mosfet(Double, Double, Double, Double, Double, Bool) -> MosfetCompanion
+
+pub fn evaluate_opamp_dc(OpAmpMacroParams, Double, Double) -> (Double, Double)
+
+pub fn evaluate_photodiode(PhotodiodeParams, Double, Double) -> (Double, Double)
+
+pub fn evaluate_rtd_current_and_conductance(RtdModelParams, Double) -> (Double, Double)
+
+pub fn evaluate_thermistor_resistance(ThermistorParams, Double) -> Double
+
+pub fn evaluate_transformer_transient(CoupledTransformerParams, Double, Double, Double, Double, Double) -> TransformerTransientCompanion
+
+pub fn evaluate_trench_mosfet_dynamic(TrenchPowerMosfetParams, Double, Double) -> TrenchMosfetDynamicState
+
+pub fn evaluate_tunnel_diode(TunnelDiodeParams, Double) -> (Double, Double)
+
+pub fn evaluate_varactor_capacitance(VaractorParams, Double) -> Double
+
+pub fn evaluate_varactor_transient(VaractorParams, Double, Double, Double, Double) -> VaractorCompanion
+
+pub fn evaluate_vbic_bjt(VbicBjtParams, Double, Double, Double) -> VbicCompanion
+
+pub fn evaluate_vc_switch(VcSwitchParams, Double, Double) -> VcSwitchCompanion
+
+pub fn evaluate_zener_diode(ZenerParams, Double, Double) -> ZenerCompanion
+
+pub fn joglekar_window(Double, Int) -> Double
 
 pub fn pnjlim(Double, Double, Double, Double) -> Double
 
 pub fn solve_nonlinear_dc(@spice.Netlist, Int, Double, Double) -> NewtonRaphsonResult
 
+pub fn stamp_advanced_mosfet_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, Int, AdvancedMosfetCompanion) -> Unit
+
 pub fn stamp_bjt_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, BjtCompanion) -> Unit
 
 pub fn stamp_diode_companion(@linalg.Matrix, @linalg.Vector, Int, Int, DiodeCompanion) -> Unit
 
+pub fn stamp_gummel_poon_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, GummelPoonCompanion) -> Unit
+
+pub fn stamp_jfet_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, JfetCompanion) -> Unit
+
 pub fn stamp_mosfet_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, MosfetCompanion) -> Unit
+
+pub fn stamp_vc_switch_companion(@linalg.Matrix, @linalg.Vector, Int, Int, Int, Int, Double, VcSwitchCompanion) -> Unit
+
+pub fn stamp_zener_companion(@linalg.Matrix, @linalg.Vector, Int, Int, ZenerCompanion) -> Unit
 
 // Errors
 
 // Types and methods
+pub struct AdvancedMosfetCompanion {
+  vgs : Double
+  vds : Double
+  vbs : Double
+  ids : Double
+  gm : Double
+  gds : Double
+  gmb : Double
+  cgs : Double
+  cgd : Double
+  cgb : Double
+  ieq : Double
+  region : AdvancedMosfetRegion
+} derive(Eq, @debug.Debug)
+
+pub struct AdvancedMosfetParams {
+  vto : Double
+  kp : Double
+  gamma : Double
+  phi : Double
+  lambda_val : Double
+  theta : Double
+  eta : Double
+  tox : Double
+  w : Double
+  l : Double
+  cgso : Double
+  cgdo : Double
+  cgbo : Double
+  is_nmos : Bool
+} derive(Eq, @debug.Debug)
+pub fn AdvancedMosfetParams::default_nmos() -> Self
+pub fn AdvancedMosfetParams::default_pmos() -> Self
+
+pub enum AdvancedMosfetRegion {
+  CutoffRegion
+  SubthresholdRegion
+  TriodeLinearRegion
+  SaturationVelocitySatRegion
+} derive(Eq, @debug.Debug)
+
 pub struct BjtCompanion {
   vbe : Double
   vbc : Double
@@ -41,12 +138,168 @@ pub struct BjtCompanion {
   ieq_c : Double
 } derive(Eq, @debug.Debug)
 
+pub struct Bsim4ExtendedCompanion {
+  vth_eff : Double
+  id : Double
+  gm : Double
+  gds : Double
+  isub : Double
+} derive(Eq, @debug.Debug)
+
+pub struct Bsim4ExtendedParams {
+  vth0 : Double
+  k1 : Double
+  k2 : Double
+  dvt0 : Double
+  dvt1 : Double
+  eta0 : Double
+  etab : Double
+  u0 : Double
+  ua : Double
+  ub : Double
+  vsat : Double
+  tox : Double
+  w : Double
+  l : Double
+} derive(Eq, @debug.Debug)
+pub fn Bsim4ExtendedParams::default_28nm() -> Self
+
+pub(all) struct CoupledTransformerParams {
+  l1 : Double
+  l2 : Double
+  k_coupling : Double
+  r1_series : Double
+  r2_series : Double
+} derive(Eq, @debug.Debug)
+pub fn CoupledTransformerParams::default_1to1() -> Self
+pub fn CoupledTransformerParams::mutual_inductance(Self) -> Double
+pub fn CoupledTransformerParams::new(Double, Double, Double, Double, Double) -> Self
+
 pub struct DiodeCompanion {
   vd : Double
   id : Double
   gd : Double
   ieq : Double
 } derive(Eq, @debug.Debug)
+
+pub struct EkvCompanion {
+  id : Double
+  gm : Double
+  gms : Double
+  gds : Double
+  q_gate : Double
+} derive(Eq, @debug.Debug)
+
+pub struct EkvMosfetParams {
+  vto : Double
+  gamma : Double
+  phi : Double
+  kp : Double
+  theta : Double
+  lambda_ch : Double
+  w_width : Double
+  l_length : Double
+} derive(Eq, @debug.Debug)
+pub fn EkvMosfetParams::default_nmos() -> Self
+
+pub struct GummelPoonCompanion {
+  vbe : Double
+  vbc : Double
+  vce : Double
+  ib : Double
+  ic : Double
+  ie : Double
+  gpi : Double
+  gmu : Double
+  gm : Double
+  go : Double
+  cbe_total : Double
+  cbc_total : Double
+  ieq_b : Double
+  ieq_c : Double
+} derive(Eq, @debug.Debug)
+
+pub struct GummelPoonParams {
+  is_val : Double
+  bf : Double
+  br : Double
+  vaf : Double
+  va_r : Double
+  ikf : Double
+  ikr : Double
+  ise : Double
+  ne : Double
+  isc : Double
+  nc : Double
+  rb : Double
+  rc : Double
+  re : Double
+  cje : Double
+  vje : Double
+  mje : Double
+  cjc : Double
+  vjc : Double
+  mjc : Double
+  tf : Double
+  tr : Double
+  is_npn : Bool
+} derive(Eq, @debug.Debug)
+pub fn GummelPoonParams::default_npn() -> Self
+pub fn GummelPoonParams::default_pnp() -> Self
+
+pub struct JfetCompanion {
+  vgs : Double
+  vds : Double
+  ids : Double
+  ig : Double
+  gm : Double
+  gds : Double
+  ggs : Double
+  ggd : Double
+  cgs : Double
+  cgd : Double
+  ieq_d : Double
+  ieq_g : Double
+  region : JfetRegion
+} derive(Eq, @debug.Debug)
+
+pub struct JfetParams {
+  vto : Double
+  beta_val : Double
+  lambda_val : Double
+  is_gate : Double
+  cgs0 : Double
+  cgd0 : Double
+  pb : Double
+  is_n_channel : Bool
+} derive(Eq, @debug.Debug)
+pub fn JfetParams::default_njfet() -> Self
+pub fn JfetParams::default_pjfet() -> Self
+
+pub enum JfetRegion {
+  JfetCutoff
+  JfetLinear
+  JfetSaturation
+} derive(Eq, @debug.Debug)
+
+pub struct LogicGateParams {
+  vdd : Double
+  vth : Double
+  gain_slope : Double
+  r_out : Double
+  c_in : Double
+  t_delay : Double
+} derive(Eq, @debug.Debug)
+pub fn LogicGateParams::default_3v3() -> Self
+
+pub struct MemristorParams {
+  r_on : Double
+  r_off : Double
+  d_film : Double
+  mu_v : Double
+  p_window : Int
+} derive(Eq, @debug.Debug)
+pub fn MemristorParams::default() -> Self
 
 pub struct MosfetCompanion {
   vgs : Double
@@ -70,6 +323,171 @@ pub struct NewtonRaphsonResult {
   solution : @linalg.Vector
   dc_result : @mna.DcResult
 } derive(Eq, @debug.Debug)
+
+pub struct OpAmpMacroParams {
+  a_vd : Double
+  gbw : Double
+  slew_rate : Double
+  v_os : Double
+  i_b : Double
+  r_in_diff : Double
+  r_in_cm : Double
+  r_out : Double
+  v_sat_pos : Double
+  v_sat_neg : Double
+  i_max_out : Double
+} derive(Eq, @debug.Debug)
+pub fn OpAmpMacroParams::default_lm741() -> Self
+pub fn OpAmpMacroParams::default_opa2134() -> Self
+
+pub struct PhotodiodeParams {
+  i_photo : Double
+  is_dark : Double
+  n_ideal : Double
+  r_shunt : Double
+  r_series : Double
+  cj0 : Double
+  responsivity : Double
+} derive(Eq, @debug.Debug)
+pub fn PhotodiodeParams::default_pin() -> Self
+
+pub struct RtdModelParams {
+  c1 : Double
+  c2 : Double
+  v_p : Double
+  v_v : Double
+  v1 : Double
+  v2 : Double
+  m_power : Double
+  c_junction : Double
+} derive(Eq, @debug.Debug)
+pub fn RtdModelParams::default_ingaas() -> Self
+
+pub struct ThermistorParams {
+  r0 : Double
+  t0_celsius : Double
+  beta_coeff : Double
+  is_ntc : Bool
+} derive(Eq, @debug.Debug)
+pub fn ThermistorParams::default_10k_ntc() -> Self
+
+pub struct TransformerTransientCompanion {
+  g11 : Double
+  g12 : Double
+  g21 : Double
+  g22 : Double
+  ieq1 : Double
+  ieq2 : Double
+} derive(Eq, @debug.Debug)
+
+pub struct TrenchMosfetDynamicState {
+  c_gd : Double
+  c_ds : Double
+  i_drain : Double
+  r_channel : Double
+} derive(Eq, @debug.Debug)
+
+pub struct TrenchPowerMosfetParams {
+  v_th : Double
+  r_ds_on : Double
+  bvdss : Double
+  c_iss : Double
+  c_oss_0 : Double
+  c_rss_0 : Double
+  q_g_total : Double
+  q_rr_diode : Double
+  t_rr_diode : Double
+} derive(Eq, @debug.Debug)
+pub fn TrenchPowerMosfetParams::default_100v() -> Self
+
+pub struct TunnelDiodeParams {
+  ip : Double
+  vp : Double
+  iv : Double
+  vv : Double
+  is_val : Double
+  vt_val : Double
+  c0 : Double
+} derive(Eq, @debug.Debug)
+pub fn TunnelDiodeParams::default_ge() -> Self
+
+pub struct VaractorCompanion {
+  cap_val : Double
+  req : Double
+  ieq : Double
+} derive(Eq, @debug.Debug)
+
+pub struct VaractorParams {
+  c0 : Double
+  vj : Double
+  m_coeff : Double
+  rs : Double
+  is_val : Double
+} derive(Eq, @debug.Debug)
+pub fn VaractorParams::default_rf() -> Self
+
+pub struct VbicBjtParams {
+  is_val : Double
+  nf : Double
+  nr : Double
+  bf : Double
+  br : Double
+  vef : Double
+  ver : Double
+  ikf : Double
+  ikr : Double
+  rci : Double
+  vo : Double
+  gamm : Double
+  rth : Double
+  cth : Double
+} derive(Eq, @debug.Debug)
+pub fn VbicBjtParams::default_sige() -> Self
+
+pub struct VbicCompanion {
+  ic : Double
+  ib : Double
+  it : Double
+  gm : Double
+  gpi : Double
+  gmu : Double
+  go : Double
+  p_diss : Double
+  delta_temp : Double
+} derive(Eq, @debug.Debug)
+
+pub struct VcSwitchCompanion {
+  g_switch : Double
+  d_g_d_vc : Double
+  i_switch : Double
+  ieq_s : Double
+} derive(Eq, @debug.Debug)
+
+pub struct VcSwitchParams {
+  vt : Double
+  vh : Double
+  ron : Double
+  roff : Double
+} derive(Eq, @debug.Debug)
+pub fn VcSwitchParams::default() -> Self
+
+pub struct ZenerCompanion {
+  vd : Double
+  id : Double
+  gd : Double
+  ieq : Double
+  is_breakdown : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct ZenerParams {
+  is_val : Double
+  n_val : Double
+  vz : Double
+  izk : Double
+  rz : Double
+  cj0 : Double
+} derive(Eq, @debug.Debug)
+pub fn ZenerParams::default_5v1() -> Self
 
 // Type aliases
 

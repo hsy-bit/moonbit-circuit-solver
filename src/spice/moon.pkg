@@ -1,3 +1,7 @@
+import {
+  "moonbitlang/core/math",
+}
+
 options(
   "is-main": false,
 )

@@ -8,21 +8,55 @@ import {
 }
 
 // Values
+pub const BOLTZMANN_K : Double = 1.380649e-23
+
+pub const ELECTRON_Q : Double = 1.602176634e-19
+
+pub const STANDARD_TEMP_K : Double = 290.0
+
+pub fn analyze_pole_zero_stability(Array[PoleZeroRoot], Array[PoleZeroRoot]) -> PoleZeroResult
+
 pub fn build_dc_mna_system(@spice.Netlist) -> (NodeIndexer, @linalg.Matrix, @linalg.Vector, Map[String, Int])
 
+pub fn compute_dc_adjoint_sensitivities(@spice.Netlist, String) -> AdjointSensitivityResult
+
+pub fn compute_flicker_noise_density(Double, Double, Double, Double) -> Double
+
+pub fn compute_network_poles(@linalg.Matrix, @linalg.Matrix) -> Array[PoleZeroRoot]
+
+pub fn compute_oct_dominant_pole(Array[Double], Array[Double]) -> OctPoleResult
+
 pub fn compute_resistor_sensitivity(@spice.Netlist, String, String) -> ComponentSensitivity
+
+pub fn compute_sct_lower_cutoff(Array[Double], Array[Double]) -> Double
+
+pub fn compute_shot_noise_density(Double) -> Double
+
+pub fn compute_taylor_distortion(Double, Double, Double, Double) -> DistortionResult
+
+pub fn compute_thermal_noise_density(Double, Double) -> Double
 
 pub fn get_bjt_small_signal(Double, Double, Double, Double, Double) -> BjtSmallSignal
 
 pub fn get_diode_small_signal(Double, Double, Double, Double) -> DiodeSmallSignal
 
+pub fn run_monte_carlo_dc(@spice.Netlist, Array[ComponentVariation], Int, String, Double, Double, Int) -> MonteCarloSummary
+
 pub fn solve_ac_at_freq(@spice.Netlist, Double) -> AcPoint
 
 pub fn solve_ac_sweep(@spice.Netlist, Double, Double, Int) -> AcResult
 
+pub fn solve_dc_gmin_stepping(@spice.Netlist, Int) -> DcContinuationResult
+
 pub fn solve_dc_op(@spice.Netlist) -> DcResult
 
+pub fn solve_dc_source_stepping(@spice.Netlist, Int) -> DcContinuationResult
+
 pub fn solve_dc_sweep_2d(@spice.Netlist, String, Double, Double, Double, String, Double, Double, Double) -> DcSweep2DResult
+
+pub fn solve_noise_analysis(@spice.Netlist, String, String, Double, Double, Int, Double) -> NoiseAnalysisResult
+
+pub fn solve_pss_shooting(Double, Int, Int, Double) -> PssResult
 
 pub fn stamp_isource(@linalg.Vector, Int, Int, Double) -> Unit
 
@@ -44,6 +78,8 @@ pub fn synthesize_tline_lumped_cascade(RlgcTransmissionLine, String, String, Str
 
 pub fn to_db(Double) -> Double
 
+pub fn y_to_s_parameters(@linalg.Complex, @linalg.Complex, @linalg.Complex, @linalg.Complex, Double, Double) -> TwoPortSParameters
+
 // Errors
 
 // Types and methods
@@ -55,6 +91,12 @@ pub struct AcPoint {
 
 pub struct AcResult {
   sweep_points : Array[AcPoint]
+} derive(Eq, @debug.Debug)
+
+pub struct AdjointSensitivityResult {
+  target_node : String
+  sensitivities : Map[String, Double]
+  normalized_sens : Map[String, Double]
 } derive(Eq, @debug.Debug)
 
 pub struct BjtSmallSignal {
@@ -70,6 +112,21 @@ pub struct ComponentSensitivity {
   comp_name : String
   node_name : String
   sensitivity_v_per_unit : Double
+} derive(Eq, @debug.Debug)
+
+pub struct ComponentVariation {
+  comp_name : String
+  nominal_value : Double
+  tolerance_percent : Double
+  is_gaussian : Bool
+} derive(Eq, @debug.Debug)
+pub fn ComponentVariation::new(String, Double, Double, Bool) -> Self
+
+pub struct DcContinuationResult {
+  converged : Bool
+  method_used : String
+  total_iterations : Int
+  solution : DcResult
 } derive(Eq, @debug.Debug)
 
 pub struct DcResult {
@@ -110,6 +167,43 @@ pub struct DiodeSmallSignal {
 } derive(Eq, @debug.Debug)
 pub fn DiodeSmallSignal::new(Double, Double) -> Self
 
+pub struct DistortionResult {
+  fundamental_mag : Double
+  hd2_mag : Double
+  hd3_mag : Double
+  hd2_dbc : Double
+  hd3_dbc : Double
+  thd_percent : Double
+  imd3_dbc : Double
+} derive(Eq, @debug.Debug)
+
+pub struct LcgRng {
+  mut seed : Int
+} derive(Eq, @debug.Debug)
+pub fn LcgRng::new(Int) -> Self
+pub fn LcgRng::next_gaussian(Self) -> Double
+pub fn LcgRng::next_uniform(Self) -> Double
+
+pub struct MonteCarloRun {
+  run_index : Int
+  perturbed_values : Map[String, Double]
+  node_voltages : Map[String, Double]
+} derive(Eq, @debug.Debug)
+
+pub struct MonteCarloSummary {
+  output_node : String
+  num_runs : Int
+  mean_voltage : Double
+  std_dev : Double
+  min_voltage : Double
+  max_voltage : Double
+  p5_voltage : Double
+  p50_median_voltage : Double
+  p95_voltage : Double
+  yield_percent : Double
+  runs : Array[MonteCarloRun]
+} derive(Eq, @debug.Debug)
+
 pub struct NodeIndexer {
   node_to_idx : Map[String, Int]
   idx_to_node : Map[Int, String]
@@ -123,6 +217,62 @@ pub fn NodeIndexer::new() -> Self
 pub fn NodeIndexer::node_count(Self) -> Int
 pub fn NodeIndexer::total_size(Self) -> Int
 
+pub struct NoiseAnalysisResult {
+  output_node : String
+  input_source : String
+  points : Array[NoisePoint]
+  total_integrated_output_noise_rms : Double
+  total_integrated_input_noise_rms : Double
+} derive(Eq, @debug.Debug)
+
+pub struct NoisePoint {
+  freq : Double
+  total_output_noise_density : Double
+  output_noise_voltage_density : Double
+  input_referred_noise_density : Double
+  noise_figure_db : Double
+  contributions : Array[NoiseSourceContribution]
+} derive(Eq, @debug.Debug)
+
+pub struct NoiseSourceContribution {
+  source_name : String
+  noise_type : String
+  spectral_density : Double
+  transfer_gain_sq : Double
+  output_noise_density : Double
+} derive(Eq, @debug.Debug)
+
+pub struct OctPoleResult {
+  sum_rc_seconds : Double
+  dominant_pole_rad_s : Double
+  dominant_pole_hz : Double
+} derive(Eq, @debug.Debug)
+
+pub struct PoleZeroResult {
+  poles : Array[PoleZeroRoot]
+  zeros : Array[PoleZeroRoot]
+  is_stable : Bool
+  dominant_pole_hz : Double
+  gain_margin_db : Double
+  phase_margin_deg : Double
+} derive(Eq, @debug.Debug)
+
+pub struct PoleZeroRoot {
+  sigma : Double
+  omega : Double
+  frequency_hz : Double
+  q_factor : Double
+  damping_ratio : Double
+} derive(Eq, @debug.Debug)
+pub fn PoleZeroRoot::from_complex(@linalg.Complex) -> Self
+
+pub struct PssResult {
+  period : Double
+  converged : Bool
+  shooting_iterations : Int
+  limit_cycle_samples : Array[(Double, Double)]
+} derive(Eq, @debug.Debug)
+
 pub struct RlgcTransmissionLine {
   r_per_len : Double
   l_per_len : Double
@@ -132,6 +282,26 @@ pub struct RlgcTransmissionLine {
   sections : Int
 } derive(Eq, @debug.Debug)
 pub fn RlgcTransmissionLine::new(Double, Double, Double, Double, Double, Int) -> Self
+
+pub struct TwoPortMetrics {
+  return_loss_port1_db : Double
+  return_loss_port2_db : Double
+  insertion_loss_db : Double
+  vswr_port1 : Double
+  vswr_port2 : Double
+  rollett_k : Double
+  is_unconditionally_stable : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct TwoPortSParameters {
+  freq : Double
+  z0 : Double
+  s11 : @linalg.Complex
+  s12 : @linalg.Complex
+  s21 : @linalg.Complex
+  s22 : @linalg.Complex
+} derive(Eq, @debug.Debug)
+pub fn TwoPortSParameters::compute_metrics(Self) -> TwoPortMetrics
 
 // Type aliases
 

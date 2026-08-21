@@ -1,0 +1,205 @@
+// Copyright 2026 hsy-bit
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+///|
+test "Suite117 Master 01: 5-Stage Interconnected Filter Amplifier Pipeline DC Verification" {
+  let netlist_str =
+    #|* Master 5-Stage Pipeline Netlist
+    #|VIN in 0 DC 1.0
+    #|* Stage 1: Follower
+    #|X1 in out1 out1 OPAMP
+    #|* Stage 2: Sallen-Key LPF
+    #|R1 out1 n1 10000.0
+    #|R2 n1 n2 10000.0
+    #|C1 n1 out2 10e-9
+    #|C2 n2 0 10e-9
+    #|X2 n2 out2 out2 OPAMP
+    #|* Stage 3: Gain 2.0
+    #|R3 out2 n3 1000.0
+    #|RF3 n3 out3 2000.0
+    #|X3 0 n3 out3 OPAMP
+    #|* Stage 4: Inverting Gain -1.0
+    #|R4 out3 n4 1000.0
+    #|RF4 n4 out4 1000.0
+    #|X4 0 n4 out4 OPAMP
+    #|* Stage 5: Inverting Gain -1.0
+    #|R5 out4 n5 1000.0
+    #|RF5 n5 out5 1000.0
+    #|X5 0 n5 out5 OPAMP
+    #|RLOAD out5 0 10000.0
+    #|.op
+  let netlist = @spice.parse_spice_netlist(netlist_str)
+  let sim = @circuit.CircuitSimulator::new(netlist)
+  let dc = sim.solve_dc()
+
+  // Stage 1: 1.0V, Stage 2: 1.0V, Stage 3: -2.0V, Stage 4: +2.0V, Stage 5: -2.0V
+  let v1 = dc.get("out1").unwrap()
+  let v2 = dc.get("out2").unwrap()
+  let v3 = dc.get("out3").unwrap()
+  let v4 = dc.get("out4").unwrap()
+  let v5 = dc.get("out5").unwrap()
+
+  assert_true((v1 - 1.0).abs() < 1.0e-3)
+  assert_true((v2 - 1.0).abs() < 1.0e-3)
+  assert_true((v3 - -2.0).abs() < 1.0e-3)
+  assert_true((v4 - 2.0).abs() < 1.0e-3)
+  assert_true((v5 - -2.0).abs() < 1.0e-3)
+}
+
+///|
+test "Suite117 Master 02: Sparse 750-Node BiCGSTAB Solver on Banded Grid" {
+  let n = 750
+  let builder = @linalg.SparseBuilder::new(n, n)
+  for i in 0..<n {
+    builder.add_entry(i, i, 4.0)
+    if i > 0 {
+      builder.add_entry(i, i - 1, -1.0)
+    }
+    if i + 1 < n {
+      builder.add_entry(i, i + 1, -1.0)
+    }
+  }
+  let csr = builder.to_csr()
+  let b = @linalg.Vector::zeros(n)
+  for i in 0..<n {
+    b.set(i, 1.0)
+  }
+
+  let sol = @linalg.bicgstab_solve(csr, b, 350, 1.0e-6)
+  assert_true(sol.converged)
+  assert_true(sol.solution.length() == n)
+}
+
+///|
+test "Suite117 Master 03: 10th-Order Chebyshev Low-Pass Synthesis Stability" {
+  let poles = @symbolic.synthesize_chebyshev1_poles(10, 0.05)
+  assert_true(poles.length() == 10)
+  for p in poles {
+    assert_true(p.re < 0.0) // Strictly LHP
+  }
+}
+
+///|
+test "Suite117 Master 04: Reverse Cuthill-McKee Matrix Permutation on 300-Node Band" {
+  let n = 300
+  let builder = @linalg.SparseBuilder::new(n, n)
+  for i in 0..<n {
+    builder.add_entry(i, i, 3.0)
+    if i > 0 {
+      builder.add_entry(i, i - 1, -1.0)
+    }
+    if i + 1 < n {
+      builder.add_entry(i, i + 1, -1.0)
+    }
+  }
+  let csr = builder.to_csr()
+  let rcm = @linalg.reverse_cuthill_mckee(csr)
+
+  assert_true(rcm.length() == 300)
+}
+
+///|
+test "Suite117 Master 05: Padé [6/6] Matrix Exponential on Diagonal Decaying System" {
+  let a_mat = @linalg.Matrix::zeros(2, 2)
+  a_mat.set(0, 0, -1.5)
+  a_mat.set(0, 1, 0.0)
+  a_mat.set(1, 0, 0.0)
+  a_mat.set(1, 1, -2.5)
+
+  let exp_m = @transient.compute_matrix_exp(a_mat)
+  let e_15 = @math.exp(-1.5)
+  let e_25 = @math.exp(-2.5)
+
+  assert_true((exp_m.get(0, 0) - e_15).abs() < 1.0e-4)
+  assert_true((exp_m.get(1, 1) - e_25).abs() < 1.0e-4)
+}
+
+///|
+test "Suite117 Master 06: Tellegen Adjoint DC Sensitivity Multi-Node Ladder Network" {
+  let s = "* Multi-Node Adjoint Grid\n" +
+    "V1 in 0 DC 8.0\n" +
+    "R1 in n1 1000.0\n" +
+    "R2 n1 n2 1000.0\n" +
+    "R3 n2 0 1000.0\n" +
+    "R4 n2 out 500.0\n" +
+    "R5 out 0 500.0\n" +
+    ".op\n"
+  let netlist = @spice.parse_spice_netlist(s)
+  let adj = @mna.compute_dc_adjoint_sensitivities(netlist, "out")
+
+  assert_true(adj.sensitivities.contains("R1"))
+  assert_true(adj.sensitivities.contains("R5"))
+}
+
+///|
+test "Suite117 Master 07: Monte Carlo Yield Confidence Interval Verification" {
+  let s = "* Monte Carlo Verification Netlist\n" +
+    "V1 in 0 DC 10.0\n" +
+    "R1 in out 5000.0\n" +
+    "R2 out 0 5000.0\n" +
+    ".op\n"
+  let netlist = @spice.parse_spice_netlist(s)
+  let vars = [
+    @mna.ComponentVariation::new("R1", 5000.0, 0.5, true),
+    @mna.ComponentVariation::new("R2", 5000.0, 0.5, true),
+  ]
+
+  let mc = @mna.run_monte_carlo_dc(netlist, vars, 50, "out", 4.90, 5.10, 777)
+  assert_true(mc.num_runs == 50)
+  assert_true(mc.yield_percent >= 95.0)
+}
+
+///|
+test "Suite117 Master 08: Vector SVG Smith Chart Generation with S11 Locus" {
+  let gamma_pts = [
+    @linalg.Complex::new(0.0, 0.0),
+    @linalg.Complex::new(0.1, 0.1),
+    @linalg.Complex::new(0.4, -0.3),
+  ]
+  let smith_svg = @visualizer.render_smith_chart_svg(
+    gamma_pts, 400.0, "Master S11 Locus",
+  )
+  assert_true(smith_svg.contains("Master S11 Locus"))
+  assert_true(smith_svg.contains("</svg>"))
+}
+
+///|
+test "Suite117 Master 09: Vector SVG Waveform Exporter Multi-Point Output" {
+  let t_pts = [0.0, 0.001, 0.002, 0.003]
+  let v_pts = [0.0, 5.0, 0.0, -5.0]
+  let cfg = @visualizer.SvgPlotConfig::default()
+
+  let svg = @visualizer.render_waveform_svg(cfg, t_pts, v_pts)
+  assert_true(svg.contains("<svg"))
+  assert_true(svg.contains("</svg>"))
+}
+
+///|
+test "Suite117 Master 10: Grand SPICE Solver Sign-Off Certification" {
+  let netlist_str =
+    #|* Master EDA Solver Sign-Off Netlist
+    #|VIN in 0 DC 4.0
+    #|R1 in inv 1000.0
+    #|RF inv out 2000.0
+    #|X1 0 inv out OPAMP
+    #|RLOAD out 0 5000.0
+    #|.op
+  let netlist = @spice.parse_spice_netlist(netlist_str)
+  let sim = @circuit.CircuitSimulator::new(netlist)
+  let dc = sim.solve_dc()
+
+  // V_out = -8.0 V
+  let v_out = dc.get("out").unwrap()
+  assert_true((v_out - -8.0).abs() < 1.0e-3)
+}

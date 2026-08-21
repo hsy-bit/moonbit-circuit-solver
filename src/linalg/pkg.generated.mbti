@@ -6,19 +6,51 @@ import {
 }
 
 // Values
+pub fn arnoldi_iteration(CsrMatrix, Int) -> (Matrix, Array[Vector])
+
 pub fn bicgstab_solve(CsrMatrix, Vector, Int, Double) -> BicgstabResult
+
+pub fn complex_gaussian_solve(ComplexMatrix, ComplexVector) -> ComplexVector
+
+pub fn complex_matrix_cond_estimate(ComplexMatrix) -> Double
+
+pub fn complex_matrix_inverse(ComplexMatrix) -> ComplexMatrix
+
+pub fn compute_givens(Double, Double) -> (Double, Double, Double)
+
+pub fn compute_markowitz_scores(Matrix, Array[Bool], Array[Bool], Double) -> MarkowitzPivot?
+
+pub fn compute_matrix_bandwidth(CsrMatrix, Array[Int]) -> Int
 
 pub fn compute_matrix_inverse(Matrix) -> Matrix?
 
 pub fn compute_pseudo_inverse(Matrix) -> PseudoInverseResult
 
+pub fn compute_svd(Matrix, Int, Double) -> SvdResult
+
 pub fn conjugate_gradient_solve(Matrix, Vector, Int, Double) -> IterativeResult
 
 pub fn cramer_solve_3x3(Matrix, Vector) -> Vector?
 
+pub fn dense_minres_solve(Matrix, Vector, Int, Double) -> DenseMinresResult
+
 pub fn determinant(Matrix) -> Double
 
+pub fn equilibrate_matrix(Matrix) -> EquilibrationResult
+
+pub fn estimate_condition_1norm(Matrix, Int) -> Double
+
+pub fn factorize_sparse_lu(Matrix, Double) -> SparseLuSolver
+
+pub fn fgmres_solve(CsrMatrix, Vector, Int, Int, Double) -> KrylovResult
+
+pub fn francis_qr_eigenvalues(Matrix, Int, Double) -> SpectrumResult
+
 pub fn gaussian_solve(Matrix, Vector) -> SolverResult
+
+pub fn gmres_solve(Matrix, Vector, Int, Int, Double) -> GmresResult
+
+pub fn hessenberg_reduction(Matrix) -> Matrix
 
 pub fn jacobi_eigen(Matrix, Int, Double) -> EigenDecomposition
 
@@ -26,13 +58,33 @@ pub fn jacobi_solve(Matrix, Vector, Int, Double) -> IterativeResult
 
 pub fn matrix_inverse(Matrix) -> Matrix
 
+pub fn matrix_norm_inf(Matrix) -> Double
+
+pub fn minres_solve(CsrMatrix, Vector, Int, Double) -> KrylovResult
+
 pub fn moving_average_filter(Vector, Int) -> Vector
+
+pub fn parse_matrix_market(String) -> CsrMatrix
 
 pub fn pinv_solve(Matrix, Vector) -> Vector
 
 pub fn qr_solve(Matrix, Vector) -> Vector
 
+pub fn reverse_cuthill_mckee(CsrMatrix) -> Array[Int]
+
+pub fn serialize_matrix_market(CsrMatrix) -> String
+
+pub fn solve_scalar_tridiagonal(Array[Double], Array[Double], Array[Double], Array[Double]) -> Array[Double]
+
+pub fn sor_solve(Matrix, Vector, Double, Int, Double) -> SorResult
+
 pub fn sparse_cholesky_solve(CsrMatrix, Vector) -> Vector?
+
+pub fn sparse_qr_decompose(Matrix) -> SparseQrResult
+
+pub fn svd_pseudo_inverse(Matrix, Double) -> Matrix
+
+pub fn tfqmr_solve(CsrMatrix, Vector, Int, Double) -> KrylovResult
 
 // Errors
 
@@ -44,12 +96,98 @@ pub struct BicgstabResult {
   residual : Double
 } derive(Eq, @debug.Debug)
 
+pub struct BlockJacobiPreconditioner {
+  n : Int
+  block_size : Int
+  inv_blocks : Array[Matrix]
+} derive(Eq, @debug.Debug)
+pub fn BlockJacobiPreconditioner::apply(Self, Vector) -> Vector
+pub fn BlockJacobiPreconditioner::new(Matrix, Int) -> Self
+
 pub struct CholeskyDecomposition {
   n : Int
   l_mat : Matrix
 } derive(Eq, @debug.Debug)
 pub fn CholeskyDecomposition::decompose(Matrix) -> Self
 pub fn CholeskyDecomposition::solve(Self, Vector) -> Vector
+
+pub struct Complex {
+  re : Double
+  im : Double
+} derive(Eq, @debug.Debug)
+pub fn Complex::abs(Self) -> Double
+pub fn Complex::abs_sq(Self) -> Double
+pub fn Complex::add(Self, Self) -> Self
+pub fn Complex::arg(Self) -> Double
+pub fn Complex::conj(Self) -> Self
+pub fn Complex::div(Self, Self) -> Self
+pub fn Complex::exp(Self) -> Self
+pub fn Complex::from_polar(Double, Double) -> Self
+pub fn Complex::i() -> Self
+pub fn Complex::ln(Self) -> Self
+pub fn Complex::mul(Self, Self) -> Self
+pub fn Complex::new(Double, Double) -> Self
+pub fn Complex::one() -> Self
+pub fn Complex::pow(Self, Double) -> Self
+pub fn Complex::recip(Self) -> Self
+pub fn Complex::scale(Self, Double) -> Self
+pub fn Complex::sqrt(Self) -> Self
+pub fn Complex::sub(Self, Self) -> Self
+pub fn Complex::zero() -> Self
+
+pub struct ComplexLuDecomposition {
+  n : Int
+  lu_mat : ComplexMatrix
+  pivots : Array[Int]
+  sign : Int
+} derive(Eq, @debug.Debug)
+pub fn ComplexLuDecomposition::decompose(ComplexMatrix) -> Self
+pub fn ComplexLuDecomposition::det(Self) -> Complex
+pub fn ComplexLuDecomposition::solve(Self, ComplexVector) -> ComplexVector
+
+pub struct ComplexMatrix {
+  rows : Int
+  cols : Int
+  data : Array[Complex]
+} derive(Eq, @debug.Debug)
+pub fn ComplexMatrix::add(Self, Self) -> Self
+pub fn ComplexMatrix::add_row_multiple(Self, Int, Int, Complex) -> Unit
+pub fn ComplexMatrix::add_to_element(Self, Int, Int, Complex) -> Unit
+pub fn ComplexMatrix::conjugate_transpose(Self) -> Self
+pub fn ComplexMatrix::copy(Self) -> Self
+pub fn ComplexMatrix::get(Self, Int, Int) -> Complex
+pub fn ComplexMatrix::identity(Int) -> Self
+pub fn ComplexMatrix::make(Int, Int, Complex) -> Self
+pub fn ComplexMatrix::multiply(Self, Self) -> Self
+pub fn ComplexMatrix::multiply_vector(Self, ComplexVector) -> ComplexVector
+pub fn ComplexMatrix::norm_frobenius(Self) -> Double
+pub fn ComplexMatrix::norm_inf(Self) -> Double
+pub fn ComplexMatrix::num_cols(Self) -> Int
+pub fn ComplexMatrix::num_rows(Self) -> Int
+pub fn ComplexMatrix::scale(Self, Complex) -> Self
+pub fn ComplexMatrix::set(Self, Int, Int, Complex) -> Unit
+pub fn ComplexMatrix::swap_rows(Self, Int, Int) -> Unit
+pub fn ComplexMatrix::transpose(Self) -> Self
+pub fn ComplexMatrix::zeros(Int, Int) -> Self
+
+pub struct ComplexVector {
+  data : Array[Complex]
+} derive(Eq, @debug.Debug)
+pub fn ComplexVector::add(Self, Self) -> Self
+pub fn ComplexVector::axpy_inplace(Self, Complex, Self) -> Unit
+pub fn ComplexVector::dot(Self, Self) -> Complex
+pub fn ComplexVector::dot_hermitian(Self, Self) -> Complex
+pub fn ComplexVector::from_array(Array[Complex]) -> Self
+pub fn ComplexVector::get(Self, Int) -> Complex
+pub fn ComplexVector::length(Self) -> Int
+pub fn ComplexVector::make(Int, Complex) -> Self
+pub fn ComplexVector::norm_inf(Self) -> Double
+pub fn ComplexVector::norm_l2(Self) -> Double
+pub fn ComplexVector::scale(Self, Complex) -> Self
+pub fn ComplexVector::scale_real(Self, Double) -> Self
+pub fn ComplexVector::set(Self, Int, Complex) -> Unit
+pub fn ComplexVector::sub(Self, Self) -> Self
+pub fn ComplexVector::zeros(Int) -> Self
 
 pub struct CsrMatrix {
   rows : Int
@@ -64,9 +202,37 @@ pub fn CsrMatrix::multiply_vector(Self, Vector) -> Vector
 pub fn CsrMatrix::nnz(Self) -> Int
 pub fn CsrMatrix::to_dense(Self) -> Matrix
 
+pub struct DenseMinresResult {
+  solution : Vector
+  iterations : Int
+  converged : Bool
+  final_residual : Double
+} derive(Eq, @debug.Debug)
+
 pub struct EigenDecomposition {
   eigenvalues : Vector
   eigenvectors : Matrix
+} derive(Eq, @debug.Debug)
+
+pub struct EquilibrationResult {
+  scaled_mat : Matrix
+  row_scales : Vector
+  col_scales : Vector
+  condition_improvement : Double
+} derive(Eq, @debug.Debug)
+
+pub struct GivensRotation {
+  r1 : Int
+  r2 : Int
+  c : Double
+  s : Double
+} derive(Eq, @debug.Debug)
+
+pub struct GmresResult {
+  solution : Vector
+  iterations : Int
+  converged : Bool
+  final_residual : Double
 } derive(Eq, @debug.Debug)
 
 pub struct Ilu0Preconditioner {
@@ -75,6 +241,13 @@ pub struct Ilu0Preconditioner {
 } derive(Eq, @debug.Debug)
 pub fn Ilu0Preconditioner::apply(Self, Vector) -> Vector
 pub fn Ilu0Preconditioner::new(Matrix, Matrix) -> Self
+
+pub struct IncompleteCholeskyPreconditioner {
+  n : Int
+  l_csr : CsrMatrix
+} derive(Eq, @debug.Debug)
+pub fn IncompleteCholeskyPreconditioner::apply(Self, Vector) -> Vector
+pub fn IncompleteCholeskyPreconditioner::new(CsrMatrix) -> Self
 
 pub struct IterativeResult {
   solution : Vector
@@ -85,6 +258,14 @@ pub struct IterativeStats {
   iterations : Int
   residual_norm : Double
   converged : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct KrylovResult {
+  solution : Vector
+  iterations : Int
+  converged : Bool
+  final_residual : Double
+  residual_history : Array[Double]
 } derive(Eq, @debug.Debug)
 
 pub struct LuDecomposition {
@@ -99,11 +280,19 @@ pub fn LuDecomposition::solve(Self, Vector) -> Vector
 pub fn LuDecomposition::solve_lower(Self, Vector) -> Vector
 pub fn LuDecomposition::solve_upper(Self, Vector) -> Vector
 
+pub struct MarkowitzPivot {
+  row : Int
+  col : Int
+  score : Int
+  pivot_val : Double
+} derive(Eq, @debug.Debug)
+
 pub struct Matrix {
   rows : Int
   cols : Int
   data : Array[Double]
 } derive(Eq, @debug.Debug)
+pub fn Matrix::add(Self, Self) -> Self
 pub fn Matrix::add_row_multiple(Self, Int, Int, Double) -> Unit
 pub fn Matrix::add_to_element(Self, Int, Int, Double) -> Unit
 pub fn Matrix::copy(Self) -> Self
@@ -120,6 +309,7 @@ pub fn Matrix::num_rows(Self) -> Int
 pub fn Matrix::scale(Self, Double) -> Self
 pub fn Matrix::scale_row(Self, Int, Double) -> Unit
 pub fn Matrix::set(Self, Int, Int, Double) -> Unit
+pub fn Matrix::sub(Self, Self) -> Self
 pub fn Matrix::swap_rows(Self, Int, Int) -> Unit
 pub fn Matrix::transpose(Self) -> Self
 pub fn Matrix::zeros(Int, Int) -> Self
@@ -148,6 +338,13 @@ pub enum SolverResult {
   SingularMatrix(String)
 } derive(Eq, @debug.Debug)
 
+pub struct SorResult {
+  solution : Vector
+  iterations : Int
+  converged : Bool
+  residual_norm : Double
+} derive(Eq, @debug.Debug)
+
 pub struct SparseBuilder {
   rows : Int
   cols : Int
@@ -162,6 +359,45 @@ pub struct SparseCholeskyResult {
   converged : Bool
 } derive(Eq, @debug.Debug)
 pub fn SparseCholeskyResult::new(CsrMatrix, Bool) -> Self
+
+pub struct SparseLuSolver {
+  n : Int
+  row_perm : Array[Int]
+  col_perm : Array[Int]
+  l_csr : CsrMatrix
+  u_csr : CsrMatrix
+  fill_in_count : Int
+  is_valid : Bool
+} derive(Eq, @debug.Debug)
+pub fn SparseLuSolver::solve(Self, Vector) -> Vector
+
+pub struct SparseQrResult {
+  m : Int
+  n : Int
+  rotations : Array[GivensRotation]
+  r_csr : CsrMatrix
+} derive(Eq, @debug.Debug)
+pub fn SparseQrResult::solve_least_squares(Self, Vector) -> Vector
+
+pub struct SpectrumResult {
+  eigenvalues : Array[Complex]
+  is_converged : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct SsorPreconditioner {
+  n : Int
+  omega : Double
+  dense_mat : Matrix
+} derive(Eq, @debug.Debug)
+pub fn SsorPreconditioner::apply(Self, Vector) -> Vector
+pub fn SsorPreconditioner::new(Matrix, Double) -> Self
+
+pub struct SvdResult {
+  u : Matrix
+  s : Vector
+  v : Matrix
+  rank : Int
+} derive(Eq, @debug.Debug)
 
 pub struct Vector {
   data : Array[Double]
