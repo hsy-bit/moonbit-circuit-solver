@@ -22,7 +22,7 @@ jobs:
         run: moon version --all
 
       - name: Check Code Formatting
-        run: moon fmt --deny-warn
+        run: moon fmt --check
 
       - name: Check Interface Files
         run: moon info
