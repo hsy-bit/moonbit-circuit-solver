@@ -195,9 +195,9 @@ test "Suite40 Master 09: Padé [6/6] Matrix Exponential State-Space Evolution" {
 }
 
 ///|
-test "Suite40 Master 10: Master End-to-End SPICE Regression Golden Sign-Off" {
+test "Suite40 Master 10: Master End-to-End SPICE Regression Golden Verification" {
   let netlist_str =
-    #|* Master EDA Acceptance Golden Benchmark
+    #|* Master EDA Regression Golden Benchmark
     #|V_SUP vcc 0 DC 10.0
     #|V_IN in 0 DC 2.5
     #|R_IN in inv 10000.0

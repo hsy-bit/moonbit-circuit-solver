@@ -97,6 +97,7 @@ test "Suite60 Mega 05: GMRES Restarted Iterative Solver on Asymmetric Matrix" {
 
   let gmres_res = @linalg.gmres_solve(a_mat, b_vec, 4, 10, 1.0e-5)
   assert_true(gmres_res.converged)
+  assert_true(gmres_res.final_residual < 1.0e-5)
   // Exact solution is x = [1.0, 1.0, 1.0, 1.0]
   assert_true((gmres_res.solution.get(0) - 1.0).abs() < 1.0e-3)
   assert_true((gmres_res.solution.get(1) - 1.0).abs() < 1.0e-3)
@@ -160,9 +161,9 @@ test "Suite60 Mega 09: Vector SVG Export from Simulation Results" {
 }
 
 ///|
-test "Suite60 Mega 10: Grand Final SPICE Solver Sign-Off Certification" {
+test "Suite60 Mega 10: Grand Final SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Acceptance Grand Sign-Off Netlist
+    #|* Master EDA Regression Grand Verification Netlist
     #|VIN in 0 DC 3.0
     #|R1 in inv 1000.0
     #|RF inv out 2000.0

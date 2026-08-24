@@ -174,9 +174,9 @@ test "Suite168 Transcendence 09: Vector SVG Waveform Exporter Multi-Point Output
 }
 
 ///|
-test "Suite168 Transcendence 10: 30000+ Lines Grand Apex SPICE Engine Complete Sign-Off" {
+test "Suite168 Transcendence 10: 30000+ Lines Grand Apex SPICE Engine Complete Verification" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 3.0
     #|R1 in inv 1000.0
     #|RF inv out 5000.0

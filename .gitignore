@@ -1,4 +1,5 @@
 /_build
+/.repos
 /.moon
 *.wasm
 *.js

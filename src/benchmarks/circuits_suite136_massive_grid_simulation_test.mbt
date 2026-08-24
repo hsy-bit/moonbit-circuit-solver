@@ -135,7 +135,7 @@ test "Suite136 GridMesh 09: Dynamic Load Step 50A/ns Voltage Drop Margin (< 50 m
 }
 
 ///|
-test "Suite136 GridMesh 10: Complete Power Grid MNA Linear System Sign-Off" {
+test "Suite136 GridMesh 10: Complete Power Grid MNA Linear System Verification" {
   let is_mesh_signed_off = true
   assert_true(is_mesh_signed_off)
 }

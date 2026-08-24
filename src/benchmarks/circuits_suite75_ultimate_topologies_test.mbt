@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-test "Suite75 Ultimate 01: Multi-Stage Cascaded Instrumentation Pipeline DC Sign-Off" {
+test "Suite75 Ultimate 01: Multi-Stage Cascaded Instrumentation Pipeline DC Verification" {
   let netlist_str =
-    #|* Master Ultimate EDA Sign-Off Netlist
+    #|* Master Ultimate EDA Verification Netlist
     #|VIN in 0 DC 0.50
     #|* Stage 1: Differential Amplifier (Gain = 10)
     #|R1 in n1 1000.0
@@ -189,9 +189,9 @@ test "Suite75 Ultimate 09: Vector SVG Smith Chart Generation" {
 }
 
 ///|
-test "Suite75 Ultimate 10: Master Golden Benchmark Certification Sign-Off" {
+test "Suite75 Ultimate 10: Master Golden Benchmark Validation Verification" {
   let netlist_str =
-    #|* Master EDA Solver Grand Sign-Off
+    #|* Master EDA Solver Grand Verification
     #|VIN in 0 DC 2.0
     #|R1 in inv 1000.0
     #|RF inv out 5000.0

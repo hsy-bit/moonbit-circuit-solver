@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "Suite100 Masterpiece 01: Full-System Multi-Stage Analog SPICE Circuit Sign-Off" {
+test "Suite100 Masterpiece 01: Full-System Multi-Stage Analog SPICE Circuit Verification" {
   let netlist_str =
     #|* Grand Masterpiece EDA Benchmark Netlist
     #|VIN in 0 DC 1.50
@@ -66,6 +66,7 @@ test "Suite100 Masterpiece 02: Sparse 500-Node BiCGSTAB Convergence on Mesh Matr
 
   let sol = @linalg.bicgstab_solve(csr, b, 250, 1.0e-6)
   assert_true(sol.converged)
+  assert_true(sol.residual < 1.0e-6)
   assert_true(sol.solution.length() == n)
 }
 
@@ -96,7 +97,9 @@ test "Suite100 Masterpiece 03: Dense MINRES Lanczos Solver Convergence on Indefi
   b_vec.set(2, 4.0)
   b_vec.set(3, 3.0)
 
-  let minres_res = @linalg.dense_minres_solve(a_mat, b_vec, 10, 1.0e-5)
+  let minres_res = @linalg.dense_minres_solve(a_mat, b_vec, 50, 1.0e-6)
+  assert_true(minres_res.converged)
+  assert_true(minres_res.final_residual < 1.0e-5)
   assert_true(minres_res.solution.length() == 4)
 }
 
@@ -191,8 +194,8 @@ test "Suite100 Masterpiece 09: Vector SVG Waveform Plot Generator" {
 }
 
 ///|
-test "Suite100 Masterpiece 10: Grand Final SPICE Solver Sign-Off Certification" {
-  let s = "* Grand Masterpiece Sign-Off\n" +
+test "Suite100 Masterpiece 10: Grand Final SPICE Solver Verification Validation" {
+  let s = "* Grand Masterpiece Verification\n" +
     "VIN in 0 DC 2.5\n" +
     "R1 in inv 1000.0\n" +
     "RF inv out 2000.0\n" +

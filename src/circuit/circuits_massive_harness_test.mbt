@@ -204,8 +204,8 @@ test "Harness 09: Full Monte Carlo Yield Statistics on 4-Resistor Bridge" {
 }
 
 ///|
-test "Harness 10: Complete EDA End-to-End Suite Acceptance Pass" {
-  let s = "* Final Suite Integration Acceptance\n" +
+test "Harness 10: Complete EDA End-to-End Suite Regression Pass" {
+  let s = "* Final Suite Integration Regression\n" +
     "VDD vdd 0 DC 5.0\n" +
     "VIN in 0 DC 2.5\n" +
     "R1 in inv 1000.0\n" +

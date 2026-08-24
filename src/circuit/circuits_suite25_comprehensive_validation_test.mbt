@@ -147,7 +147,7 @@ test "Suite25 Validation 09: Ultra-Low Phase Noise Microwave Synthesizer Stabili
 ///|
 test "Suite25 Validation 10: Master End-to-End Simulation Solver Pass" {
   let netlist_str =
-    #|* Master EDA Acceptance Test Circuit
+    #|* Master EDA Regression Test Circuit
     #|VDD vdd 0 DC 5.0
     #|VSS vss 0 DC -5.0
     #|VIN in 0 DC 1.0

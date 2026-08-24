@@ -4,7 +4,7 @@
 ///|
 fn main {
   println("=====================================================")
-  println("  MoonBit SPICE Circuit Engine & Matrix Solver v0.1.0")
+  println("  MoonBit SPICE Circuit Engine & Matrix Solver v0.1.1")
   println("=====================================================")
 
   let sample_netlist =

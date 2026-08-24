@@ -174,9 +174,9 @@ test "Suite155 Supreme 09: Vector SVG Waveform Exporter Multi-Point Output" {
 }
 
 ///|
-test "Suite155 Supreme 10: Grand Final SPICE Solver Sign-Off Certification" {
+test "Suite155 Supreme 10: Grand Final SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 3.0
     #|R1 in inv 1000.0
     #|RF inv out 5000.0

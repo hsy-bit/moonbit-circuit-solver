@@ -174,9 +174,9 @@ test "Suite145 MonumentalCrown 09: Vector SVG Waveform Exporter Multi-Point Outp
 }
 
 ///|
-test "Suite145 MonumentalCrown 10: Grand SPICE Solver Sign-Off Certification" {
+test "Suite145 MonumentalCrown 10: Grand SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 5.0
     #|R1 in inv 1000.0
     #|RF inv out 4000.0

@@ -195,9 +195,9 @@ test "Suite116 Extreme 09: Vector SVG Waveform Exporter Multi-Point Output" {
 }
 
 ///|
-test "Suite116 Extreme 10: Multi-Stage OpAmp Linear Solver Sign-Off" {
+test "Suite116 Extreme 10: Multi-Stage OpAmp Linear Solver Verification" {
   let netlist_str =
-    #|* Extreme Multi-Stage Sign-Off Netlist
+    #|* Extreme Multi-Stage Verification Netlist
     #|VIN in 0 DC 2.5
     #|R1 in inv 1000.0
     #|RF inv out 2000.0

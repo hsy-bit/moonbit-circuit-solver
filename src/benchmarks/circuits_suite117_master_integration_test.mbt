@@ -186,9 +186,9 @@ test "Suite117 Master 09: Vector SVG Waveform Exporter Multi-Point Output" {
 }
 
 ///|
-test "Suite117 Master 10: Grand SPICE Solver Sign-Off Certification" {
+test "Suite117 Master 10: Grand SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 4.0
     #|R1 in inv 1000.0
     #|RF inv out 2000.0

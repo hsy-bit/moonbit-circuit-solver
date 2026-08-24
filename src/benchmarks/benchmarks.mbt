@@ -22,14 +22,27 @@ pub struct BenchmarkHarness {
 ///|
 /// Creates a new BenchmarkHarness registry.
 pub fn BenchmarkHarness::default() -> BenchmarkHarness {
-  let _ = @linalg.Complex::zero()
-  let net = @spice.Netlist::new("test")
-  let _ = @mna.solve_dc_op(net)
+  // This registry describes the executable benchmark inventory in this package.
+  // Keep the values aligned with the checked-in benchmark suite files.
+  { total_suites: 31, total_tests: 310 }
+}
+
+///|
+/// Runs a small cross-package smoke check for the benchmark harness dependencies.
+pub fn BenchmarkHarness::smoke_check() -> Bool {
+  let complex = @linalg.Complex::zero()
+  let net = @spice.Netlist::new("benchmark smoke check")
+  let dc = @mna.solve_dc_op(net)
+  let sim = @circuit.CircuitSimulator::new(net)
+  let sim_dc = sim.solve_dc()
+  let polynomial = @symbolic.Polynomial::constant(0.0)
+
   let _ = @nonlinear.Bsim4ExtendedParams::default_28nm()
   let _ = @transient.FftWindow::Rectangular
   let _ = @visualizer.SvgPlotConfig::default()
-  let _ = @symbolic.Polynomial::constant(0.0)
-  let _ = @circuit.CircuitSimulator::new(net)
 
-  { total_suites: 150, total_tests: 1500 }
+  complex.re == 0.0 &&
+  complex.im == 0.0 &&
+  dc.node_voltages.length() == sim_dc.length() &&
+  polynomial.degree() == 0
 }

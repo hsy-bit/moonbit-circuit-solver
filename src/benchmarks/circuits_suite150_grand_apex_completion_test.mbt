@@ -174,9 +174,9 @@ test "Suite150 GrandApex 09: Vector SVG Waveform Exporter Multi-Point Output" {
 }
 
 ///|
-test "Suite150 GrandApex 10: Grand Final SPICE Solver Sign-Off Certification" {
+test "Suite150 GrandApex 10: Grand Final SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 5.0
     #|R1 in inv 1000.0
     #|RF inv out 3000.0

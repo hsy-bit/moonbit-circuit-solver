@@ -15,6 +15,7 @@ pub struct BenchmarkHarness {
   total_tests : Int
 } derive(Eq, @debug.Debug)
 pub fn BenchmarkHarness::default() -> Self
+pub fn BenchmarkHarness::smoke_check() -> Bool
 
 // Type aliases
 

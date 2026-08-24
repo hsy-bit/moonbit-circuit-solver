@@ -3,8 +3,6 @@
 [![CI](https://github.com/hsy-bit/moonbit-circuit-solver/actions/workflows/ci.yml/badge.svg)](https://github.com/hsy-bit/moonbit-circuit-solver/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Language](https://img.shields.io/badge/language-MoonBit-orange.svg)](https://www.moonbitlang.com/)
-[![Tests](https://img.shields.io/badge/tests-1800%2B%20passing-brightgreen.svg)]()
-[![Code Scale](https://img.shields.io/badge/scale-33000%2B%20lines-blue.svg)]()
 
 High-Performance Industrial-Grade SPICE Circuit Simulation Engine & Numerical Matrix Solver written natively in MoonBit.
 
@@ -76,7 +74,7 @@ moonbit-circuit-solver/
 │   ├── symbolic/                  # Symbolic Polynomials, Transfer Functions & MIMO State-Space Engine
 │   ├── visualizer/                # ASCII Chart, SVG Plotter, Smith Chart & CSV Exporters
 │   ├── circuit/                   # High-Level CircuitSimulator Engine Facade & Core Test Suites
-│   ├── benchmarks/                # Domain Test Suites (168 Comprehensive Domain Suites & Large Grids)
+│   ├── benchmarks/                # Executable domain and matrix benchmark suites
 │   └── cli/                       # Command-Line Executable Application
 ├── moon.mod                       # MoonBit Root Module Manifest
 ├── LICENSE                        # Apache-2.0 License
@@ -89,7 +87,7 @@ moonbit-circuit-solver/
 
 ### Prerequisites
 
-- [MoonBit Compiler Toolchain](https://www.moonbitlang.com/) (`moon` CLI v0.10.0 or later).
+- [MoonBit Compiler Toolchain](https://www.moonbitlang.com/) (`moon` CLI v0.10.9 or later).
 
 ### Build & Run CLI Application
 
@@ -101,7 +99,7 @@ moon run src/cli
 
 ### Run Full Test Suite
 
-Execute all 1,800+ unit, integration, domain, and matrix benchmark test suites:
+Execute the unit, integration, domain, and matrix benchmark test suites:
 
 ```bash
 moon test
@@ -113,8 +111,9 @@ Ensure clean formatting, interface signatures, and warning-free checks:
 
 ```bash
 moon fmt --deny-warn
-moon info --deny-warn
+moon info
 moon check --deny-warn
+moon test --deny-warn
 ```
 
 ---
@@ -168,13 +167,15 @@ Solving large MNA system matrices across diverse topological network scales:
 
 ## Continuous Integration (CI)
 
-This project strictly adheres to MoonBit community toolchain workflows. GitHub Actions CI automatically runs on every commit pushing to `main`:
+GitHub Actions CI runs the same formatting, interface, typecheck, test, and build checks used for local verification:
 
 1. `moon fmt --deny-warn` (Enforces idiomatic code style).
-2. `moon info --deny-warn` (Verifies interface file generation).
+2. `moon info` (Verifies interface file generation).
 3. `moon check --deny-warn` (Ensures zero compilation warnings).
-4. `moon test` (Verifies all 1,800+ test suites pass with 100% success).
-5. `moon run src/cli` (Verifies CLI executable build and run).
+4. `moon test --deny-warn` (Runs the complete test suite).
+5. `moon check --target all` and `moon test --target all` (Verifies supported targets).
+6. `moon build --target all` (Builds supported targets).
+7. `moon run src/cli` (Verifies CLI executable build and run).
 
 ---
 

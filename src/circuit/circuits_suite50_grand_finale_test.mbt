@@ -13,7 +13,7 @@
 // limitations under the License.
 
 ///|
-test "Suite50 Finale 01: Complete Superheterodyne RF Transceiver Sign-Off" {
+test "Suite50 Finale 01: Complete Superheterodyne RF Transceiver Verification" {
   let netlist_str =
     #|* Master RF Transceiver Netlist
     #|VRF in_rf 0 DC 0.001
@@ -146,8 +146,8 @@ test "Suite50 Finale 09: Monte Carlo Yield Confidence Interval Verification" {
 }
 
 ///|
-test "Suite50 Finale 10: Grand Master SPICE Solver Sign-Off and Certification" {
-  let s = "* Grand Master SPICE Simulation Sign-Off\n" +
+test "Suite50 Finale 10: Grand Master SPICE Solver Verification and Validation" {
+  let s = "* Grand Master SPICE Simulation Verification\n" +
     "VIN in 0 DC 1.0\n" +
     "R1 in inv 1000.0\n" +
     "RF inv out 1000.0\n" +

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 ///|
-test "Suite119 Acceptance 01: Multi-Stage OpAmp Pipeline Stage-by-Stage DC Output" {
+test "Suite119 Regression 01: Multi-Stage OpAmp Pipeline Stage-by-Stage DC Output" {
   let netlist_str =
-    #|* Golden Acceptance OpAmp Pipeline
+    #|* Golden Regression OpAmp Pipeline
     #|VIN in 0 DC 3.0
     #|* Stage 1: Non-Inverting Buffer
     #|X1 in out1 out1 OPAMP
@@ -46,7 +46,7 @@ test "Suite119 Acceptance 01: Multi-Stage OpAmp Pipeline Stage-by-Stage DC Outpu
 }
 
 ///|
-test "Suite119 Acceptance 02: Sparse 1000-Node BiCGSTAB Solver on Large Grid" {
+test "Suite119 Regression 02: Sparse 1000-Node BiCGSTAB Solver on Large Grid" {
   let n = 1000
   let builder = @linalg.SparseBuilder::new(n, n)
   for i in 0..<n {
@@ -66,11 +66,12 @@ test "Suite119 Acceptance 02: Sparse 1000-Node BiCGSTAB Solver on Large Grid" {
 
   let sol = @linalg.bicgstab_solve(csr, b, 500, 1.0e-6)
   assert_true(sol.converged)
+  assert_true(sol.residual < 1.0e-6)
   assert_true(sol.solution.length() == n)
 }
 
 ///|
-test "Suite119 Acceptance 03: 14th-Order Chebyshev Low-Pass Synthesis Stability" {
+test "Suite119 Regression 03: 14th-Order Chebyshev Low-Pass Synthesis Stability" {
   let poles = @symbolic.synthesize_chebyshev1_poles(14, 0.01)
   assert_true(poles.length() == 14)
   for p in poles {
@@ -79,7 +80,7 @@ test "Suite119 Acceptance 03: 14th-Order Chebyshev Low-Pass Synthesis Stability"
 }
 
 ///|
-test "Suite119 Acceptance 04: Reverse Cuthill-McKee Matrix Permutation on 500-Node Band" {
+test "Suite119 Regression 04: Reverse Cuthill-McKee Matrix Permutation on 500-Node Band" {
   let n = 500
   let builder = @linalg.SparseBuilder::new(n, n)
   for i in 0..<n {
@@ -95,10 +96,16 @@ test "Suite119 Acceptance 04: Reverse Cuthill-McKee Matrix Permutation on 500-No
   let rcm = @linalg.reverse_cuthill_mckee(csr)
 
   assert_true(rcm.length() == 500)
+  let seen = Array::make(n, false)
+  for node in rcm {
+    assert_true(node >= 0 && node < n)
+    assert_true(!seen[node])
+    seen[node] = true
+  }
 }
 
 ///|
-test "Suite119 Acceptance 05: Padé [6/6] Matrix Exponential Evolution Verification" {
+test "Suite119 Regression 05: Padé [6/6] Matrix Exponential Evolution Verification" {
   let a_mat = @linalg.Matrix::zeros(2, 2)
   a_mat.set(0, 0, -4.0)
   a_mat.set(0, 1, 0.0)
@@ -114,7 +121,7 @@ test "Suite119 Acceptance 05: Padé [6/6] Matrix Exponential Evolution Verificat
 }
 
 ///|
-test "Suite119 Acceptance 06: Tellegen Adjoint DC Sensitivity Multi-Node Ladder Network" {
+test "Suite119 Regression 06: Tellegen Adjoint DC Sensitivity Multi-Node Ladder Network" {
   let s = "* Multi-Node Adjoint Grid\n" +
     "V1 in 0 DC 15.0\n" +
     "R1 in n1 1000.0\n" +
@@ -131,7 +138,7 @@ test "Suite119 Acceptance 06: Tellegen Adjoint DC Sensitivity Multi-Node Ladder 
 }
 
 ///|
-test "Suite119 Acceptance 07: Monte Carlo Yield Confidence Interval Verification" {
+test "Suite119 Regression 07: Monte Carlo Yield Confidence Interval Verification" {
   let s = "* Monte Carlo Verification Netlist\n" +
     "V1 in 0 DC 10.0\n" +
     "R1 in out 2500.0\n" +
@@ -149,21 +156,21 @@ test "Suite119 Acceptance 07: Monte Carlo Yield Confidence Interval Verification
 }
 
 ///|
-test "Suite119 Acceptance 08: Vector SVG Smith Chart Generation with S11 Locus" {
+test "Suite119 Regression 08: Vector SVG Smith Chart Generation with S11 Locus" {
   let gamma_pts = [
     @linalg.Complex::new(0.0, 0.0),
     @linalg.Complex::new(0.2, 0.4),
     @linalg.Complex::new(0.6, -0.2),
   ]
   let smith_svg = @visualizer.render_smith_chart_svg(
-    gamma_pts, 400.0, "Acceptance S11 Locus",
+    gamma_pts, 400.0, "Regression S11 Locus",
   )
-  assert_true(smith_svg.contains("Acceptance S11 Locus"))
+  assert_true(smith_svg.contains("Regression S11 Locus"))
   assert_true(smith_svg.contains("</svg>"))
 }
 
 ///|
-test "Suite119 Acceptance 09: Vector SVG Waveform Exporter Multi-Point Output" {
+test "Suite119 Regression 09: Vector SVG Waveform Exporter Multi-Point Output" {
   let t_pts = [0.0, 0.001, 0.002, 0.003]
   let v_pts = [0.0, 2.0, 0.0, -2.0]
   let cfg = @visualizer.SvgPlotConfig::default()
@@ -174,9 +181,9 @@ test "Suite119 Acceptance 09: Vector SVG Waveform Exporter Multi-Point Output" {
 }
 
 ///|
-test "Suite119 Acceptance 10: Grand SPICE Solver Sign-Off Certification" {
+test "Suite119 Regression 10: Grand SPICE Solver Verification Validation" {
   let netlist_str =
-    #|* Master EDA Solver Sign-Off Netlist
+    #|* Master EDA Solver Verification Netlist
     #|VIN in 0 DC 2.0
     #|R1 in inv 1000.0
     #|RF inv out 3000.0
